@@ -1,21 +1,19 @@
 package si.lista1.model;
 
-import java.util.List;
-
 public class Solution {
-    private List<Integer> bestGenotype;
+    private Genotype bestGenotype;
     private Double minimalDistance;
 
-    public Solution(List<Integer> bestGenotype, Double minimalDistance) {
+    public Solution(Genotype bestGenotype, Double minimalDistance) {
         this.bestGenotype = bestGenotype;
         this.minimalDistance = minimalDistance;
     }
 
-    public List<Integer> getBestGenotype() {
+    public Genotype getBestGenotype() {
         return bestGenotype;
     }
 
-    public void setBestGenotype(List<Integer> bestGenotype) {
+    public void setBestGenotype(Genotype bestGenotype) {
         this.bestGenotype = bestGenotype;
     }
 
@@ -30,13 +28,13 @@ public class Solution {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("vector = ");
-
-        for (Integer number : bestGenotype) {
+        sb.append("Vector = [");
+        for (Integer number : bestGenotype.getVector()) {
             sb.append(number + " ");
         }
-        sb.append("\n");
-        sb.append("distance = " + minimalDistance);
+        sb.append("]\n");
+        sb.append("Distance = ");
+        sb.append(String.format("%.2f", minimalDistance));
         return sb.toString();
     }
 }

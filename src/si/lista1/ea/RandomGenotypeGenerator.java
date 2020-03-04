@@ -1,19 +1,20 @@
 package si.lista1.ea;
 
-import si.lista1.model.EuclidesCoordinates;
+import si.lista1.model.Genotype;
+import si.lista1.model.Place;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
 public class RandomGenotypeGenerator {
 
-    public List<Integer> generate(List<EuclidesCoordinates> objects) {
-        ArrayList<Integer> genotype = new ArrayList<>(objects.size());
-        for (int i = 0; i < objects.size(); i++) {
-            genotype.add(i);
+    public Genotype generate(Map<Integer, Place> places) {
+        ArrayList<Integer> genotypeVector = new ArrayList<>(places.size());
+        for (int i = 1; i < places.size() + 1; i++) {
+            genotypeVector.add(i);
         }
-        Collections.shuffle(genotype);
-        return genotype;
+        Collections.shuffle(genotypeVector);
+        return new Genotype(genotypeVector);
     }
 }

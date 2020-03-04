@@ -1,6 +1,6 @@
 package si.lista1.model;
 
-import java.util.List;
+import java.util.Map;
 
 public class DataFile {
     private String name;
@@ -9,16 +9,16 @@ public class DataFile {
     private String dimension;
     private String edgeWeightType;
     private String displayDataType;
-    private List<EuclidesCoordinates> coordinates;
+    private Map<Integer, Place> places;
 
-    public DataFile(String name, String type, String comment, String dimension, String edgeWeightType, String displayDataType, List<EuclidesCoordinates> coordinates) {
+    public DataFile(String name, String type, String comment, String dimension, String edgeWeightType, String displayDataType, Map<Integer, Place> places) {
         this.name = name;
         this.type = type;
         this.comment = comment;
         this.dimension = dimension;
         this.edgeWeightType = edgeWeightType;
         this.displayDataType = displayDataType;
-        this.coordinates = coordinates;
+        this.places = places;
     }
 
     public String getName() {
@@ -69,18 +69,18 @@ public class DataFile {
         this.displayDataType = displayDataType;
     }
 
-    public List<EuclidesCoordinates> getCoordinates() {
-        return coordinates;
+    public Map<Integer, Place> getPlaces() {
+        return places;
     }
 
-    public void setCoordinates(List<EuclidesCoordinates> coordinates) {
-        this.coordinates = coordinates;
+    public void setPlaces(Map<Integer, Place> places) {
+        this.places = places;
     }
 
     @Override
     public String toString() {
         return "name = " + name + "\ntype = " + type + "\ncomment = " + comment + "\n dimension = " + dimension
                 + "\n edgeWeightType = " + edgeWeightType + "\ndisplayDataType = " + displayDataType
-                + "\ncoordinates = \n" + coordinates;
+                + "\nplaces = \n" + places;
     }
 }

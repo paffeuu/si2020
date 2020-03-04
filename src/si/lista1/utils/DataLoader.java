@@ -1,13 +1,11 @@
 package si.lista1.utils;
 
 import si.lista1.model.DataFile;
-import si.lista1.model.EuclidesCoordinates;
+import si.lista1.model.Place;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class DataLoader {
     private File[] files;
@@ -53,18 +51,18 @@ public class DataLoader {
             displayDataType = fileContent.get(5).split("DISPLAY_DATA_TYPE: ")[1].trim();
             firstDataRow++;
         }
-        List<EuclidesCoordinates> data = new ArrayList<>();
+        Map<Integer, Place> places = new HashMap<>();
         for (int i = firstDataRow; i < fileContent.size(); i++) {
             if (fileContent.get(i).equals("EOF")) {
                 break;
             }
             String[] splitValues = fileContent.get(i).trim().split(" ");
-            Integer index = null;
+            Integer id = null;
             Double x = null;
             Double y = null;
             for (String splitValue : splitValues) {
-                if (!splitValue.isEmpty() && index == null) {
-                    index = Integer.parseInt(splitValue);
+                if (!splitValue.isEmpty() && id == null) {
+                    id = Integer.parseInt(splitValue);
                     continue;
                 }
                 if (!splitValue.isEmpty() && x == null) {
@@ -75,10 +73,10 @@ public class DataLoader {
                     y = Double.parseDouble(splitValue);
                 }
             }
-            EuclidesCoordinates coordinates = new EuclidesCoordinates(x, y);
-            data.add(coordinates);
+            Place place = new Place(id, x, y);
+            places.put(id, place);
         }
-        return new DataFile(name, type, comment, dimension, edgeWeightType, displayDataType, data);
+        return new DataFile(name, type, comment, dimension, edgeWeightType, displayDataType, places);
     }
 
 }
