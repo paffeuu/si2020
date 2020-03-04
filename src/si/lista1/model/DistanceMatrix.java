@@ -14,6 +14,10 @@ public class DistanceMatrix {
 
         for (int i = 1; i < places.size() + 1; i++) {
             for (int j = 1; j < places.size() + 1; j++) {
+                if (i == j) {
+                    matrix[j][i] = -1;
+                    continue;
+                }
                 matrix[j][i] = distanceCalculator.calculateDistance(places.get(j), places.get(i));
             }
         }

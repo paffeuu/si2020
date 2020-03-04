@@ -1,6 +1,7 @@
 package si.lista1;
 
 import si.lista1.ea.SolutionFinder;
+import si.lista1.ea.strategy.GreedyStrategy;
 import si.lista1.ea.strategy.RandomStrategy;
 import si.lista1.model.DataFile;
 import si.lista1.model.DistanceMatrix;
@@ -18,9 +19,13 @@ public class Main {
         List<DataFile> dataFileList = dataLoader.load();
 
         Map<Integer, Place> places = dataFileList.get(0).getPlaces();
-
         DistanceMatrix distanceMatrix = new DistanceMatrix(places);
+
         SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(100000, distanceMatrix));
+        solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
+
+        solutionFinder = new SolutionFinder(new GreedyStrategy(distanceMatrix));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
