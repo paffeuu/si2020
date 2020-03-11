@@ -28,11 +28,9 @@ public class Solution {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Vector = [");
-        for (Integer number : bestGenotype.getVector()) {
-            sb.append(number + " ");
-        }
-        sb.append("]\n");
+        sb.append("Vector = ");
+        sb.append(bestGenotype);
+        sb.append("\n");
         sb.append("Distance = ");
         sb.append(String.format("%.2f", minimalDistance));
         return sb.toString();

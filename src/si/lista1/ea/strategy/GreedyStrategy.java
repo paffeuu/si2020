@@ -22,7 +22,7 @@ public class GreedyStrategy extends Strategy {
         double minimalDistance = Double.MAX_VALUE;
         for (int i = 1; i < places.size() + 1; i++) {
             Genotype genotype = findGreedySolutionStartingFrom(i, places);
-            double distance = distanceCalculator.sumDistance(genotype, places, distanceMatrix);
+            double distance = distanceCalculator.sumDistance(genotype, distanceMatrix);
             if (distance < minimalDistance) {
                 minimalDistance = distance;
                 bestGenotype = genotype;

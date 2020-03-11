@@ -20,4 +20,15 @@ public class Genotype {
     public List<Integer> getVector() {
         return vector;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (Integer number : getVector()) {
+            sb.append(number + " ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
 }

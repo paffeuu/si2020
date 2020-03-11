@@ -22,7 +22,7 @@ public class RandomStrategy extends Strategy {
         double minimalDistance = Double.MAX_VALUE;
         for (int i = 0; i < getRepetitions(); i++) {
             Genotype genotype = randomGenotypeGenerator.generate(places);
-            double distance = distanceCalculator.sumDistance(genotype, places, distanceMatrix);
+            double distance = distanceCalculator.sumDistance(genotype, distanceMatrix);
             if (distance < minimalDistance) {
                 minimalDistance = distance;
                 bestGenotype = genotype;

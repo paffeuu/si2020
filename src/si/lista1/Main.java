@@ -1,11 +1,13 @@
 package si.lista1;
 
 import si.lista1.ea.SolutionFinder;
+import si.lista1.ea.strategy.EvolutionaryAlgorithmStrategy;
 import si.lista1.ea.strategy.GreedyStrategy;
 import si.lista1.ea.strategy.RandomStrategy;
 import si.lista1.model.DataFile;
 import si.lista1.model.DistanceMatrix;
 import si.lista1.model.Place;
+import si.lista1.model.SelectionType;
 import si.lista1.utils.DataLoader;
 
 import java.util.List;
@@ -28,6 +30,9 @@ public class Main {
         solutionFinder = new SolutionFinder(new GreedyStrategy(distanceMatrix));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
+
+        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(distanceMatrix, SelectionType.ROULETTE));
+        solutionFinder.findOptimalSolution(places);
 
 
     }
