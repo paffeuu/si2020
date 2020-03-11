@@ -4,10 +4,7 @@ import si.lista1.ea.RandomGenotypeGenerator;
 import si.lista1.model.*;
 import si.lista1.utils.DistanceCalculator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EvolutionaryAlgorithmStrategy extends Strategy {
 
@@ -25,16 +22,28 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
     @Override
     public Solution findOptimalSolution(Map<Integer, Place> places) {
         List<Genotype> population = initializePopulation(places);
-        List<Genotype> selectedPopulation = null;
-        switch (selectionType) {
-            case TOURNAMENT:
-                selectedPopulation = conductTournamentSelection(population, tournamentSize);
-                break;
-            case ROULETTE:
-                selectedPopulation = conductRouletteSelection(population);
+        Genotype bestGenotype = null;
+        double minimalDistance = Double.MAX_VALUE;
+        for (int i = 0; i < 100; i++) {
+            switch (selectionType) {
+                case TOURNAMENT:
+                    population = conductTournamentSelection(population, tournamentSize);
+                    break;
+                case ROULETTE:
+                    population = conductRouletteSelection(population);
+            }
+            population = conductOrderedCrossover(population);
+            conductSwapMutation(population, 0.05);
+            DistanceCalculator distanceCalculator = new DistanceCalculator();
+            for (Genotype genotype : population) {
+                double distance = distanceCalculator.sumDistance(genotype, distanceMatrix);
+                if (distance < minimalDistance) {
+                    minimalDistance = distance;
+                    bestGenotype = genotype;
+                }
+            }
         }
-        List<Genotype> populationAfterCrossover = conductOrderedCrossover(selectedPopulation);
-        return null;
+        return new Solution(bestGenotype, minimalDistance);
     }
 
     private List<Genotype> initializePopulation(Map<Integer, Place> places) {
@@ -66,7 +75,6 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
             }
             selectedPopulation.add(bestGenotype);
             population.addAll(tournament);
-            System.out.println(new Solution(bestGenotype, minimalDistance));
         }
         return selectedPopulation;
     }
@@ -107,11 +115,54 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
     }
 
     private List<Genotype> conductOrderedCrossover(List<Genotype> population) {
-//        for ()
-//        int firstIntersection = (int)(Math.random() * population.size());
-//        int secondIntersection = (int)(Math.random() * population.size());
-        return null;
+        List<Genotype> populationAfterCrossover = new ArrayList<>();
+        for (int i = 0; i < population.size(); i++) {
+            Random random = new Random();
+            int firstIntersection = (random.nextInt(population.get(0).size()));
+            int secondIntersection;
+            do {
+                secondIntersection = (random.nextInt(population.get(0).size()));
+            } while (firstIntersection == secondIntersection);
+            if (firstIntersection > secondIntersection) {
+                int temp = secondIntersection;
+                secondIntersection = firstIntersection;
+                firstIntersection = temp;
+            }
+            Genotype firstParent = population.get(i);
+            Genotype secondParent = population.get((i + 1) % population.size());
+            Genotype child = new Genotype(secondParent);
+            List<Integer> placesToRelocate = new ArrayList<>();
+            for (int j = firstIntersection; j <= secondIntersection; j++) {
+                placesToRelocate.add(firstParent.get(j));
+            }
+            for (Integer placeToRelocate : placesToRelocate) {
+                child.getVector().removeIf(number -> number.equals(placeToRelocate));
+            }
+            for (int k = 0; k < placesToRelocate.size(); k++ ) {
+                child.getVector().add(firstIntersection + k, placesToRelocate.get(k));
+            }
+            populationAfterCrossover.add(child);
+        }
+        return populationAfterCrossover;
     }
 
+    private void conductSwapMutation(List<Genotype> population, double mutationLikelihood) {
+        Random random = new Random();
+        for (Genotype genotype : population) {
+            if (random.nextDouble() < mutationLikelihood) {
+                int firstPlace = (random.nextInt(genotype.size()));
+                int secondPlace;
+                do {
+                    secondPlace = (random.nextInt(genotype.size()));
+                } while (firstPlace == secondPlace);
+                int firstValue = genotype.getVector().get(firstPlace);
+                int secondValue = genotype.getVector().get(secondPlace);
+                genotype.getVector().remove(firstPlace);
+                genotype.getVector().add(firstPlace, secondValue);
+                genotype.getVector().remove(secondPlace);
+                genotype.getVector().add(secondPlace, firstValue);
+            }
+        }
+    }
 
 }

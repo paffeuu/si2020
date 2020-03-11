@@ -23,7 +23,7 @@ public class Main {
         Map<Integer, Place> places = dataFileList.get(0).getPlaces();
         DistanceMatrix distanceMatrix = new DistanceMatrix(places);
 
-        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(100000, distanceMatrix));
+        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(1000000, distanceMatrix));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
@@ -31,8 +31,9 @@ public class Main {
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
-        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(distanceMatrix, SelectionType.ROULETTE));
+        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(distanceMatrix, SelectionType.TOURNAMENT));
         solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
 
 
     }

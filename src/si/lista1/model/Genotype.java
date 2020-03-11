@@ -1,12 +1,17 @@
 package si.lista1.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Genotype {
+public class Genotype{
     private final List<Integer> vector;
 
     public Genotype(List<Integer> vector) {
         this.vector = vector;
+    }
+
+    public Genotype(Genotype originalGenotype) {
+        this.vector = new ArrayList<>(originalGenotype.vector);
     }
 
     public Integer get(int index) {
