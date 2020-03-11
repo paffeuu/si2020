@@ -13,9 +13,8 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
 
     private RandomGenotypeGenerator genotypeGenerator;
     private SelectionType selectionType;
-    private int populationSize = 10;
+    private int populationSize = 100;
     private int tournamentSize = 50;
-    private int selectionSize = 2;
 
     public EvolutionaryAlgorithmStrategy(DistanceMatrix distanceMatrix, SelectionType selectionType) {
         super("EA strategy(selection type: " + selectionType.name() + ")", 1, distanceMatrix);
@@ -26,7 +25,7 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
     @Override
     public Solution findOptimalSolution(Map<Integer, Place> places) {
         List<Genotype> population = initializePopulation(places);
-        List<Genotype> selectedPopulation;
+        List<Genotype> selectedPopulation = null;
         switch (selectionType) {
             case TOURNAMENT:
                 selectedPopulation = conductTournamentSelection(population, tournamentSize);
@@ -34,6 +33,7 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
             case ROULETTE:
                 selectedPopulation = conductRouletteSelection(population);
         }
+        List<Genotype> populationAfterCrossover = conductOrderedCrossover(selectedPopulation);
         return null;
     }
 
@@ -46,8 +46,8 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
     }
 
     private List<Genotype> conductTournamentSelection(List<Genotype> population, int tournamentSize) {
-        List<Genotype> selectedPopulation = new ArrayList<>(selectionSize);
-        while (selectedPopulation.size() != selectionSize) {
+        List<Genotype> selectedPopulation = new ArrayList<>(population.size());
+        while (selectedPopulation.size() != population.size()) {
             List<Genotype> tournament = new ArrayList<>(tournamentSize);
             for (int i = 0; i < tournamentSize; i++) {
                 int randomIndex = (int) (Math.random() * population.size());
@@ -65,7 +65,6 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
                 }
             }
             selectedPopulation.add(bestGenotype);
-            tournament.remove(bestGenotype);
             population.addAll(tournament);
             System.out.println(new Solution(bestGenotype, minimalDistance));
         }
@@ -95,7 +94,7 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
             limitList.add(limit);
         }
         List<Genotype> selectionPopulation = new ArrayList<>();
-        for (int i = 0; i < selectionSize; i++) {
+        for (int i = 0; i < population.size(); i++) {
             double randomNr = Math.random();
             for (int j = 0; j < limitList.size(); j++) {
                 if (randomNr < limitList.get(j)) {
@@ -105,6 +104,13 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
             }
         }
         return selectionPopulation;
+    }
+
+    private List<Genotype> conductOrderedCrossover(List<Genotype> population) {
+//        for ()
+//        int firstIntersection = (int)(Math.random() * population.size());
+//        int secondIntersection = (int)(Math.random() * population.size());
+        return null;
     }
 
 
