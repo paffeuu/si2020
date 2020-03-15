@@ -16,14 +16,14 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        String[] fileNames = new String[]{"data\\berlin11_modified.tsp"};
+        String[] fileNames = new String[]{"data\\kroA100.tsp"};
         DataLoader dataLoader = new DataLoader(fileNames);
         List<DataFile> dataFileList = dataLoader.load();
 
         Map<Integer, Place> places = dataFileList.get(0).getPlaces();
         DistanceMatrix distanceMatrix = new DistanceMatrix(places);
 
-        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(1000000, distanceMatrix));
+        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(10000, distanceMatrix));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
@@ -31,7 +31,10 @@ public class Main {
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
-        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(distanceMatrix, SelectionType.TOURNAMENT));
+        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+                distanceMatrix, SelectionType.TOURNAMENT,
+                200, 5, 1000,
+                0.7, 0.07, 20));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
