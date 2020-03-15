@@ -32,11 +32,6 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
         this.generations = generations;
         this.crossoverLikelihood = crossoverLikelihood;
         this.mutationLikelihood = mutationLikelihood;
-        try {
-            this.logger = ResultLogger.getResultLogger();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -44,6 +39,7 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
         Genotype bestGenotype = null;
         double minimalDistance = Double.MAX_VALUE;
         for (int j = 0; j < repetitions; j++) {
+            getNewLogFile();
             List<Genotype> population = initializePopulation(places);
             for (int i = 0; i < generations; i++) {
                 double bestInPop = Double.MAX_VALUE;
@@ -77,8 +73,12 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
                     minimalDistance = bestInPop;
                     bestGenotype = bestGenotypeInPop;
                 }
+                if (i+1 == generations) {
+                    System.out.println(bestInPop);
+                }
+
             }
-            System.out.println(minimalDistance);
+
 
         }
 
@@ -205,6 +205,14 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
                 genotype.getVector().remove(secondPlace);
                 genotype.getVector().add(secondPlace, firstValue);
             }
+        }
+    }
+
+    private void getNewLogFile() {
+        try {
+            this.logger = ResultLogger.getResultLogger();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

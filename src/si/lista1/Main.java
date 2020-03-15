@@ -16,7 +16,7 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        String[] fileNames = new String[]{"data\\kroA100.tsp"};
+        String[] fileNames = new String[]{"data\\berlin52.tsp"};
         DataLoader dataLoader = new DataLoader(fileNames);
         List<DataFile> dataFileList = dataLoader.load();
 
@@ -33,8 +33,8 @@ public class Main {
 
         solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
                 distanceMatrix, SelectionType.TOURNAMENT,
-                200, 5, 1000,
-                0.7, 0.07, 20));
+                400, 10, 2000,
+                0.7, 0.2, 100));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
