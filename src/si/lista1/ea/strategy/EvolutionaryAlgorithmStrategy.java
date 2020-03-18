@@ -4,13 +4,17 @@ import si.lista1.ea.RandomGenotypeGenerator;
 import si.lista1.model.*;
 import si.lista1.utils.DistanceCalculator;
 import si.lista1.utils.ResultLogger;
+import si.lista1.utils.StatisticsPrinter;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class EvolutionaryAlgorithmStrategy extends Strategy {
 
     private RandomGenotypeGenerator genotypeGenerator;
+    private StatisticsPrinter statisticsPrinter;
     private SelectionType selectionType;
     private int populationSize;
     private int tournamentSize;
@@ -26,6 +30,7 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
                                          int repetitions) {
         super("EA strategy(selection type: " + selectionType.name() + ")", repetitions, distanceMatrix);
         this.genotypeGenerator = new RandomGenotypeGenerator();
+        this.statisticsPrinter = new StatisticsPrinter();
         this.selectionType = selectionType;
         this.populationSize = populationSize;
         this.tournamentSize = tournamentSize;
@@ -38,9 +43,10 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
     public Solution findOptimalSolution(Map<Integer, Place> places) {
         Genotype bestGenotype = null;
         double minimalDistance = Double.MAX_VALUE;
+        List<Double> results = new ArrayList<>();
         for (int j = 0; j < repetitions; j++) {
             getNewLogFile();
-            List<Genotype> population = initializePopulation(places);
+            List<Genotype> population = initializePopulationRandomly(places);
             for (int i = 0; i < generations; i++) {
                 double bestInPop = Double.MAX_VALUE;
                 double worstInPop = Double.MIN_VALUE;
@@ -75,20 +81,51 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
                 }
                 if (i+1 == generations) {
                     System.out.println(bestInPop);
+                    results.add(bestInPop);
                 }
-
             }
-
-
         }
+        statisticsPrinter.printStatistics(results, repetitions);
+
 
         return new Solution(bestGenotype, minimalDistance);
     }
 
-    private List<Genotype> initializePopulation(Map<Integer, Place> places) {
+    private List<Genotype> initializePopulationRandomly(Map<Integer, Place> places) {
         List<Genotype> population = new ArrayList<>(populationSize);
         for (int i = 0; i < populationSize; i++) {
             population.add(genotypeGenerator.generate(places));
+        }
+        return population;
+    }
+
+    private List<Genotype> initializePopulationGreedy(Map<Integer, Place> places) {
+        List<Genotype> population = new ArrayList<>();
+        Random random = new Random();
+        List<Integer> numbers = IntStream.range(1, places.size()).boxed().collect(Collectors.toList());
+        for (int j = 0; j < populationSize; j++) {
+            int start = numbers.get(random.nextInt(places.size()-1));
+            List<Integer> vector = new ArrayList<>();
+            int fromId = start;
+            vector.add(fromId);
+            while(vector.size() != places.size()) {
+                double minimalDistance = Double.MAX_VALUE;
+                int nextId = -1;
+                for (int i = 1; i < places.size() + 1; i++) {
+                    if (i == fromId || vector.contains(i)) {
+                        continue;
+                    }
+                    double distance = distanceMatrix.getDistance(fromId, i);
+                    if (distance < minimalDistance) {
+                        minimalDistance = distance;
+                        nextId = i;
+                    }
+                }
+                vector.add(nextId);
+                fromId = nextId;
+            }
+            Genotype genotype = new Genotype(vector);
+            population.add(genotype);
         }
         return population;
     }

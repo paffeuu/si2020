@@ -16,28 +16,50 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        String[] fileNames = new String[]{"data\\berlin52.tsp"};
+        String[] fileNames = new String[]{"data\\fl417.tsp"};
         DataLoader dataLoader = new DataLoader(fileNames);
         List<DataFile> dataFileList = dataLoader.load();
 
         Map<Integer, Place> places = dataFileList.get(0).getPlaces();
         DistanceMatrix distanceMatrix = new DistanceMatrix(places);
 
-        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(10000, distanceMatrix));
-        solutionFinder.findOptimalSolution(places);
-        System.out.println(solutionFinder.getLastResultDescription());
+        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(1000000, 10, distanceMatrix));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//
+//        solutionFinder = new SolutionFinder(new GreedyStrategy(distanceMatrix));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
 
-        solutionFinder = new SolutionFinder(new GreedyStrategy(distanceMatrix));
-        solutionFinder.findOptimalSolution(places);
-        System.out.println(solutionFinder.getLastResultDescription());
+
+
+
+        System.out.println("Pm = 0.05");
 
         solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
                 distanceMatrix, SelectionType.TOURNAMENT,
-                400, 10, 2000,
-                0.7, 0.2, 100));
+                1000, 15, 1000,
+                0.9, 0.05, 10));
         solutionFinder.findOptimalSolution(places);
         System.out.println(solutionFinder.getLastResultDescription());
 
+        System.out.println("Pm = 0.2");
 
+        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+                distanceMatrix, SelectionType.TOURNAMENT,
+                1000, 15, 1000,
+                0.9, 0.2, 10));
+        solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
+        System.out.println("Pm = 0.3");
+
+        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+                distanceMatrix, SelectionType.TOURNAMENT,
+                1000, 15, 1000,
+                0.9, 0.3, 10));
+        solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
     }
+
+
 }

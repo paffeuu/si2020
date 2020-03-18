@@ -1,6 +1,6 @@
 NAME: fl417
-COMMENT: Drilling problem (Reinelt)
 TYPE: TSP
+COMMENT: Drilling problem (Reinelt)
 DIMENSION: 417
 EDGE_WEIGHT_TYPE: EUC_2D
 NODE_COORD_SECTION
