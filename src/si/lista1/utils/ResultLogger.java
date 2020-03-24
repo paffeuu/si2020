@@ -7,12 +7,13 @@ import java.io.IOException;
 public class ResultLogger {
     private FileWriter fw;
 
-    private ResultLogger() throws IOException {
-        this.fw = new FileWriter(new File("log\\" + getFilename()), true);
+    private ResultLogger(String params) throws IOException {
+        this.fw = new FileWriter(new File("log\\" + params + getFilename()), true);
+        System.out.println(params);
     }
 
-    public static ResultLogger getResultLogger() throws IOException {
-        return new ResultLogger();
+    public static ResultLogger getResultLogger(String params) throws IOException {
+        return new ResultLogger(params);
     }
 
     public void saveToLog(int i, double best, double worst, double avg) throws IOException {
@@ -32,7 +33,7 @@ public class ResultLogger {
     }
 
     private String getFilename() {
-        return "log_" + System.currentTimeMillis() + ".csv";
+        return "_log_" + System.currentTimeMillis() + ".csv";
     }
 
 }

@@ -16,49 +16,167 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        String[] fileNames = new String[]{"data\\fl417.tsp"};
+        String fileName = "fl417";
+        String[] fileNames = new String[]{"data\\" + fileName + ".tsp"};
         DataLoader dataLoader = new DataLoader(fileNames);
         List<DataFile> dataFileList = dataLoader.load();
 
         Map<Integer, Place> places = dataFileList.get(0).getPlaces();
         DistanceMatrix distanceMatrix = new DistanceMatrix(places);
+//
+        SolutionFinder solutionFinder;
 
-        SolutionFinder solutionFinder = new SolutionFinder(new RandomStrategy(1000000, 10, distanceMatrix));
+        solutionFinder = new SolutionFinder(new RandomStrategy(1000000, 10, distanceMatrix));
+        solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
+
+        solutionFinder = new SolutionFinder(new GreedyStrategy(distanceMatrix));
+        solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
+
+
+
+                solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+                distanceMatrix, SelectionType.TOURNAMENT,
+                1000, 5, 1000,
+                0.7, 0.15, 10, fileName));
+        solutionFinder.findOptimalSolution(places);
+        System.out.println(solutionFinder.getLastResultDescription());
+
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.1, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+////
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.01, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.05, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.15, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.2, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+
+
+        fileName = "kroA150";
+        fileNames = new String[]{"data\\" + fileName + ".tsp"};
+        dataLoader = new DataLoader(fileNames);
+        dataFileList = dataLoader.load();
+
+        places = dataFileList.get(0).getPlaces();
+        distanceMatrix = new DistanceMatrix(places);
+
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.05, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.01, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.5, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.15, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.2, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+
+
+
+        fileName = "kroA200";
+        fileNames = new String[]{"data\\" + fileName + ".tsp"};
+        dataLoader = new DataLoader(fileNames);
+        dataFileList = dataLoader.load();
+
+        places = dataFileList.get(0).getPlaces();
+        distanceMatrix = new DistanceMatrix(places);
+
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.05, 10, fileName));
 //        solutionFinder.findOptimalSolution(places);
 //        System.out.println(solutionFinder.getLastResultDescription());
 //
-//        solutionFinder = new SolutionFinder(new GreedyStrategy(distanceMatrix));
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.ROULETTE,
+//                1000, 3, 1000,
+//                0.7, 0.1, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 8, 1000,
+//                0.7, 0.1, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 10, 1000,
+//                0.7, 0.1, 10, fileName));
 //        solutionFinder.findOptimalSolution(places);
 //        System.out.println(solutionFinder.getLastResultDescription());
 
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.01, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.5, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.15, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
+//        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
+//                distanceMatrix, SelectionType.TOURNAMENT,
+//                1000, 5, 1000,
+//                0.7, 0.2, 10, fileName));
+//        solutionFinder.findOptimalSolution(places);
+//        System.out.println(solutionFinder.getLastResultDescription());
 
-
-
-        System.out.println("Pm = 0.05");
-
-        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
-                distanceMatrix, SelectionType.TOURNAMENT,
-                1000, 15, 1000,
-                0.9, 0.05, 10));
-        solutionFinder.findOptimalSolution(places);
-        System.out.println(solutionFinder.getLastResultDescription());
-
-        System.out.println("Pm = 0.2");
-
-        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
-                distanceMatrix, SelectionType.TOURNAMENT,
-                1000, 15, 1000,
-                0.9, 0.2, 10));
-        solutionFinder.findOptimalSolution(places);
-        System.out.println(solutionFinder.getLastResultDescription());
-        System.out.println("Pm = 0.3");
-
-        solutionFinder = new SolutionFinder(new EvolutionaryAlgorithmStrategy(
-                distanceMatrix, SelectionType.TOURNAMENT,
-                1000, 15, 1000,
-                0.9, 0.3, 10));
-        solutionFinder.findOptimalSolution(places);
-        System.out.println(solutionFinder.getLastResultDescription());
     }
 
 

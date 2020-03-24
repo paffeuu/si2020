@@ -5,14 +5,17 @@ import si.lista1.model.Genotype;
 import si.lista1.model.Place;
 import si.lista1.model.Solution;
 import si.lista1.utils.DistanceCalculator;
+import si.lista1.utils.ResultLogger;
 import si.lista1.utils.StatisticsPrinter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class GreedyStrategy extends Strategy {
     private StatisticsPrinter statisticsPrinter;
+    private ResultLogger logger;
 
     public GreedyStrategy(DistanceMatrix distanceMatrix) {
         super("Greedy strategy", 1, distanceMatrix);
@@ -59,5 +62,13 @@ public class GreedyStrategy extends Strategy {
             fromId = nextId;
         }
         return new Genotype(vector);
+    }
+
+    private void getNewLogFile(String params) {
+        try {
+            this.logger = ResultLogger.getResultLogger(params);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

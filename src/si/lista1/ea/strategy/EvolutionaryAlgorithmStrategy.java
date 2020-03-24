@@ -21,13 +21,14 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
     private int generations;
     private double crossoverLikelihood;
     private double mutationLikelihood;
+    private String fileName;
 
     private ResultLogger logger;
 
     public EvolutionaryAlgorithmStrategy(DistanceMatrix distanceMatrix, SelectionType selectionType,
                                          int populationSize, int tournamentSize, int generations,
                                          double crossoverLikelihood, double mutationLikelihood,
-                                         int repetitions) {
+                                         int repetitions, String fileName) {
         super("EA strategy(selection type: " + selectionType.name() + ")", repetitions, distanceMatrix);
         this.genotypeGenerator = new RandomGenotypeGenerator();
         this.statisticsPrinter = new StatisticsPrinter();
@@ -37,6 +38,7 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
         this.generations = generations;
         this.crossoverLikelihood = crossoverLikelihood;
         this.mutationLikelihood = mutationLikelihood;
+        this.fileName = fileName;
     }
 
     @Override
@@ -45,7 +47,15 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
         double minimalDistance = Double.MAX_VALUE;
         List<Double> results = new ArrayList<>();
         for (int j = 0; j < repetitions; j++) {
-            getNewLogFile();
+            getNewLogFile(
+                    "EA_" + fileName +
+                    "_pop=" + populationSize +
+                    "_sel=" + selectionType.name() +
+                    "_tour=" + tournamentSize +
+                    "_gen=" + generations +
+                    "_Px=" + crossoverLikelihood +
+                    "_Pm=" + mutationLikelihood +
+                    "_" + j);
             List<Genotype> population = initializePopulationRandomly(places);
             for (int i = 0; i < generations; i++) {
                 double bestInPop = Double.MAX_VALUE;
@@ -245,9 +255,9 @@ public class EvolutionaryAlgorithmStrategy extends Strategy {
         }
     }
 
-    private void getNewLogFile() {
+    private void getNewLogFile(String params) {
         try {
-            this.logger = ResultLogger.getResultLogger();
+            this.logger = ResultLogger.getResultLogger(params);
         } catch (IOException e) {
             e.printStackTrace();
         }
