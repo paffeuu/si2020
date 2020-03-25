@@ -151,6 +151,10 @@ public class Sudoku {
         return gaps;
     }
 
+    public int getId() {
+        return id;
+    }
+
     private String getPrintableVisualization() {
         StringBuilder sb = new StringBuilder();
         for (int y = 0; y < 9; y++ ) {
