@@ -43,7 +43,20 @@ public class JolkaParser extends Parser {
             int wordStart = -1;
             for (int j = 0; j < stage[0].length; j++) {
                 if (stage[i][j] == '#') {
-                    if (wordStart != -1) {
+                    if (wordStart != -1 && j - wordStart > 1) {
+                        Integer[] gap = new Integer[4];
+                        gap[0] = wordStart;
+                        gap[1] = j - 1;
+                        gap[2] = i;
+                        gap[3] = i;
+                        gaps.add(gap);
+                    }
+                    wordStart = -1;
+                } else if (stage[i][j] == '_') {
+                    if (wordStart == -1) {
+                        wordStart = j;
+                    }
+                    if (j == stage[0].length - 1 && j - wordStart > 0) {
                         Integer[] gap = new Integer[4];
                         gap[0] = wordStart;
                         gap[1] = j;
@@ -51,10 +64,6 @@ public class JolkaParser extends Parser {
                         gap[3] = i;
                         gaps.add(gap);
                         wordStart = -1;
-                    }
-                } else if (stage[i][j] == '_') {
-                    if (wordStart == -1) {
-                        wordStart = j;
                     }
                 }
             }
@@ -64,7 +73,20 @@ public class JolkaParser extends Parser {
             int wordStart = -1;
             for (int i = 0; i < stage.length; i++) {
                 if (stage[i][j] == '#') {
-                    if (wordStart != -1) {
+                    if (wordStart != -1 && i - wordStart > 1) {
+                        Integer[] gap = new Integer[4];
+                        gap[0] = j;
+                        gap[1] = j;
+                        gap[2] = wordStart;
+                        gap[3] = i - 1;
+                        gaps.add(gap);
+                    }
+                    wordStart = -1;
+                } else if (stage[i][j] == '_') {
+                    if (wordStart == -1) {
+                        wordStart = i;
+                    }
+                    if (i == stage.length - 1 && i - wordStart > 0) {
                         Integer[] gap = new Integer[4];
                         gap[0] = j;
                         gap[1] = j;
@@ -72,10 +94,6 @@ public class JolkaParser extends Parser {
                         gap[3] = i;
                         gaps.add(gap);
                         wordStart = -1;
-                    }
-                } else if (stage[i][j] == '_') {
-                    if (wordStart == -1) {
-                        wordStart = i;
                     }
                 }
             }
