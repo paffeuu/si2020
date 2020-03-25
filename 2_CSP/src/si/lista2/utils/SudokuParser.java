@@ -1,6 +1,6 @@
 package si.lista2.utils;
 
-import si.lista2.model.Sudoku;
+import si.lista2.model.sudoku.Sudoku;
 
 import java.io.File;
 import java.io.FileNotFoundException;
