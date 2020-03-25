@@ -61,6 +61,45 @@ public class Sudoku {
         return true;
     }
 
+
+
+    public boolean checkConstraints(int gap, int value) {
+        int x = gap % 9;
+        int y = gap / 9;
+        for (int i = 0; i < 9; i++) {
+            // horizontal
+            Integer valueHToCompare = stage[y * 9 + i];
+            if (valueHToCompare != null) {
+                if (valueHToCompare == value && i != x) {
+                    return false;
+                }
+            }
+            // vertical
+            Integer valueVToCompare = stage[i * 9 + x];
+            if (valueVToCompare != null) {
+                if (valueVToCompare == value && i != y) {
+                    return false;
+                }
+            }
+        }
+        // square
+        int sqX = x % 3;
+        int sqY = y % 3;
+        int edgeX = x / 3;
+        int edgeY = y / 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                Integer valueSToCompare = stage[(edgeY * 3 + i) * 9 + (edgeX * 3 + j)];
+                if (valueSToCompare != null) {
+                    if (valueSToCompare == value && i != sqY && j != sqX) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public void addNewField(Integer value) {
         if (pointer >= 81) {
             throw new SudokuParseException("Counter >= 81.");
@@ -76,8 +115,12 @@ public class Sudoku {
         return stage[x + y * 9];
     }
 
-    public Integer getField(int gapNr) {
-        return stage[gaps.get(gapNr)];
+//    public Integer getField(int gapNr) {
+//        return stage[gaps.get(gapNr)];
+//    }
+
+    public Integer getField(int gap) {
+        return stage[gap];
     }
 
 //    public void setField(int x, int y, int value) {
@@ -88,11 +131,11 @@ public class Sudoku {
 //        }
 //    }
 
-    public void setField(int gapNr, int value) {
-        if (stage[gaps.get(gapNr)] == null) {
-            stage[gaps.get(gapNr)] = value;
+    public void setField(int gap, int value) {
+        if (stage[gap] == null) {
+            stage[gap] = value;
         } else {
-            throw new FieldSetException("Field from gap [" + gapNr + "] set.");
+            throw new FieldSetException("Field from gap [" + gap + "] set.");
         }
     }
 
@@ -100,8 +143,8 @@ public class Sudoku {
 //        stage[x + y * 9] = null;
 //    }
 
-    public void unsetField(int gapNr) {
-        stage[gaps.get(gapNr)] = null;
+    public void unsetField(int gap) {
+        stage[gap] = null;
     }
 
     public List<Integer> getGaps() {

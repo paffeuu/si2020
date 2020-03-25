@@ -5,45 +5,52 @@ import si.lista2.model.sudoku.Sudoku;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 public class BacktrackingSudokuSolver {
     public List<SolvedSudoku> solve(Sudoku sudoku) {
         List<SolvedSudoku> solvedSudokus = new ArrayList<>();
-        List<Integer> gaps = sudoku.getGaps();
+        ListIterator<Integer> gapsIterator = sudoku.getGaps().listIterator();
+        int[] domain = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
         int lastCheckedValue = 0;
-        int z = 0;
-        for (int i = 0; i < gaps.size(); i++) {
-            for (int j = lastCheckedValue + 1; j < 10; j++) {
-                sudoku.setField(i, j);
-                if (sudoku.checkConstraints(i)) {
-                    lastCheckedValue = 0;
-                    if (i == gaps.size() - 1) {
+        Integer gap = gapsIterator.next();
+        do {
+            for (int nextValue : domain) {
+                if (nextValue <= lastCheckedValue) {
+                    continue;
+                }
+                lastCheckedValue = nextValue;
+                if (sudoku.checkConstraints(gap, nextValue)) {
+                    sudoku.setField(gap, nextValue);
+                    if (gapsIterator.hasNext()) {
+                        gap = gapsIterator.next();
+                        lastCheckedValue = Integer.MIN_VALUE;
+                        break;
+                    } else {
                         List<Integer> solutionVector = new ArrayList<>();
-                        for (int k = 0; k < gaps.size(); k++) {
-                            solutionVector.add(sudoku.getField(k));
-                        }
+                        sudoku.getGaps().forEach(gapp -> {
+                            solutionVector.add(sudoku.getField(gapp));
+                        });
                         SolvedSudoku solvedSudoku = new SolvedSudoku(sudoku, solutionVector);
                         solvedSudokus.add(solvedSudoku);
-                        sudoku.unsetField(gaps.size() - 1);
-                    } else {
-                        break;
-                    }
-                } else {
-                    sudoku.unsetField(i);
-                    if (j == 9) {
-                        lastCheckedValue = j;
-                        while (lastCheckedValue == 9 && --i >= 0) {
-                            lastCheckedValue = sudoku.getField(i);
-                            sudoku.unsetField(i);
-                        }
-                        i--;
+                        sudoku.unsetField(gap);
                     }
                 }
             }
-            if (i < 0) {
-                break;
+            if (lastCheckedValue == domain[domain.length - 1]) {
+                gapsIterator.previous();
+                while (lastCheckedValue == domain[domain.length - 1] && gapsIterator.hasPrevious()) {
+                    gap = gapsIterator.previous();
+                    lastCheckedValue = sudoku.getField(gap);
+                    sudoku.unsetField(gap);
+                }
+                if (gapsIterator.hasPrevious()) {
+                    gapsIterator.next();
+                }
+            } else {
+                lastCheckedValue = Integer.MIN_VALUE;
             }
-        }
+        } while (gapsIterator.hasPrevious());
         return solvedSudokus;
     }
 }

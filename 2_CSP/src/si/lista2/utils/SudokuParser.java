@@ -3,30 +3,15 @@ package si.lista2.utils;
 import si.lista2.model.sudoku.Sudoku;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class SudokuParser {
-    private File file;
+public class SudokuParser extends Parser {
     private List<String> fileContent;
 
     public SudokuParser(String fileName) {
-        this.file = new File(fileName);
-        this.fileContent = loadFileContent();
-    }
-
-    private List<String> loadFileContent() {
-        List<String> textContent = new ArrayList<>();
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                textContent.add(scanner.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return textContent;
+        File file = new File(fileName);
+        this.fileContent = loadFileContent(file);
     }
 
     public List<Sudoku> parseFileContent() {
