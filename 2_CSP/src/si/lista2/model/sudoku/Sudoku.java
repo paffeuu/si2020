@@ -2,13 +2,14 @@ package si.lista2.model.sudoku;
 
 import si.lista2.exception.FieldSetException;
 import si.lista2.exception.SudokuParseException;
+import si.lista2.model.Puzzle;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class Sudoku {
+public class Sudoku implements Puzzle {
     protected int id;
     protected int difficulty;
     protected Integer[] stage;
@@ -22,46 +23,6 @@ public class Sudoku {
         this.id = id;
         this.difficulty = (int) difficulty;
     }
-
-    public boolean checkConstraints(int gapNr) {
-        int value = stage[gaps.get(gapNr)];
-        int x = gaps.get(gapNr) % 9;
-        int y = gaps.get(gapNr) / 9;
-        for (int i = 0; i < 9; i++) {
-            // horizontal
-            Integer valueHToCompare = stage[y * 9 + i];
-            if (valueHToCompare != null) {
-                if (valueHToCompare == value && i != x) {
-                    return false;
-                }
-            }
-            // vertical
-            Integer valueVToCompare = stage[i * 9 + x];
-            if (valueVToCompare != null) {
-                if (valueVToCompare == value && i != y) {
-                    return false;
-                }
-            }
-        }
-        // square
-        int sqX = x % 3;
-        int sqY = y % 3;
-        int edgeX = x / 3;
-        int edgeY = y / 3;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                Integer valueSToCompare = stage[(edgeY * 3 + i) * 9 + (edgeX * 3 + j)];
-                if (valueSToCompare != null) {
-                    if (valueSToCompare == value && i != sqY && j != sqX) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-
 
     public boolean checkConstraints(int gap, int value) {
         int x = gap % 9;
@@ -115,21 +76,10 @@ public class Sudoku {
         return stage[x + y * 9];
     }
 
-//    public Integer getField(int gapNr) {
-//        return stage[gaps.get(gapNr)];
-//    }
-
     public Integer getField(int gap) {
         return stage[gap];
     }
 
-//    public void setField(int x, int y, int value) {
-//        if (getField(x, y) == null) {
-//            stage[x + y * 9] = value;
-//        } else {
-//            throw new FieldSetException("Field [" + x + ", " + y + "] set.");
-//        }
-//    }
 
     public void setField(int gap, int value) {
         if (stage[gap] == null) {
@@ -139,20 +89,44 @@ public class Sudoku {
         }
     }
 
-//    public void unsetField(int x, int y) {
-//        stage[x + y * 9] = null;
-//    }
-
-    public void unsetField(int gap) {
+    public int unsetField(int gap) {
+        int value = stage[gap];
         stage[gap] = null;
+        return value - 1;
     }
 
-    public List<Integer> getGaps() {
+    public SolvedSudoku createSolution() {
+        List<Integer> solutionVector = new ArrayList<>();
+        getGaps().forEach(gap -> solutionVector.add(getField((int)gap)));
+        return new SolvedSudoku(this, solutionVector);
+    }
+
+    public List getGaps() {
         return gaps;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public List<Object> getDomain() {
+        return IntStream.range(1, 10).boxed().collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean checkConstraints(Object gap, Object value) {
+        return checkConstraints((int)gap, (int)value);
+    }
+
+    @Override
+    public void fillGap(Object gap, Object value) {
+        setField((int)gap, (int)value);
+    }
+
+    @Override
+    public int releaseGap(Object gap) {
+        return unsetField((int)gap);
+    }
+
+    public String getId() {
+        return String.valueOf(id);
     }
 
     private String getPrintableVisualization() {

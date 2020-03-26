@@ -1,7 +1,6 @@
 package si.lista2.csp.sudoku;
 
-import si.lista2.model.sudoku.SolvedSudoku;
-import si.lista2.model.sudoku.Sudoku;
+import si.lista2.model.Puzzle;
 import si.lista2.utils.ResultLogger;
 
 import java.io.IOException;
@@ -9,14 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class BacktrackingSudokuSolver {
-    public List<SolvedSudoku> solve(Sudoku sudoku) {
+public class BacktrackingSolver {
+    public List<Puzzle> solve(Puzzle puzzle) {
         long startTime = System.currentTimeMillis();
-        List<SolvedSudoku> solvedSudokus = new ArrayList<>();
-        ListIterator<Integer> gapsIterator = sudoku.getGaps().listIterator();
-        int[] domain = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
-        int lastCheckedValue = 0;
-        Integer gap = gapsIterator.next();
+        List<Puzzle> solvedPuzzles = new ArrayList<>();
+        ListIterator<Object> gapsIterator = puzzle.getGaps().listIterator();
+        List<Object> domain = puzzle.getDomain();
+        int lastCheckedIndex = Integer.MIN_VALUE;
+        Object gap = gapsIterator.next();
         int solutionsFound = 0;
         long firstSolutionTime = -1;
         int firstSolutionNodes = -1;
@@ -24,17 +23,18 @@ public class BacktrackingSudokuSolver {
         int k = 0;
         int l = 0;
         do {
-            for (int nextValue : domain) {
-                if (nextValue <= lastCheckedValue) {
+            for (int i = 0; i < domain.size(); i++) {
+                if (i <= lastCheckedIndex) {
                     continue;
                 }
-                lastCheckedValue = nextValue;
-                if (sudoku.checkConstraints(gap, nextValue)) {
-                    sudoku.setField(gap, nextValue);
+                Object nextValue = domain.get(i);
+                lastCheckedIndex = i;
+                if (puzzle.checkConstraints(gap, nextValue)) {
+                    puzzle.fillGap(gap, nextValue);
                     k++;
                     if (gapsIterator.hasNext()) {
                         gap = gapsIterator.next();
-                        lastCheckedValue = Integer.MIN_VALUE;
+                        lastCheckedIndex = Integer.MIN_VALUE;
                         break;
                     } else {
                         if (solutionsFound == 0) {
@@ -43,22 +43,17 @@ public class BacktrackingSudokuSolver {
                             firstSolutionReturns = l;
                             solutionsFound++;
                         }
-                        List<Integer> solutionVector = new ArrayList<>();
-                        sudoku.getGaps().forEach(gapp -> {
-                            solutionVector.add(sudoku.getField(gapp));
-                        });
-                        SolvedSudoku solvedSudoku = new SolvedSudoku(sudoku, solutionVector);
-                        solvedSudokus.add(solvedSudoku);
-                        sudoku.unsetField(gap);
+                        Puzzle solvedPuzzle = puzzle.createSolution();
+                        solvedPuzzles.add(solvedPuzzle);
+                        puzzle.releaseGap(gap);
                     }
                 }
             }
-            if (lastCheckedValue == domain[domain.length - 1]) {
+            if (lastCheckedIndex == domain.size() - 1) {
                 gapsIterator.previous();
-                while (lastCheckedValue == domain[domain.length - 1] && gapsIterator.hasPrevious()) {
+                while (lastCheckedIndex == domain.size() - 1 && gapsIterator.hasPrevious()) {
                     gap = gapsIterator.previous();
-                    lastCheckedValue = sudoku.getField(gap);
-                    sudoku.unsetField(gap);
+                    lastCheckedIndex = puzzle.releaseGap(gap);
                     k++;
                     l++;
                 }
@@ -66,7 +61,7 @@ public class BacktrackingSudokuSolver {
                     gapsIterator.next();
                 }
             } else {
-                lastCheckedValue = Integer.MIN_VALUE;
+                lastCheckedIndex = Integer.MIN_VALUE;
             }
         } while (gapsIterator.hasPrevious());
         long endTime = System.currentTimeMillis();
@@ -74,7 +69,7 @@ public class BacktrackingSudokuSolver {
         int endReturns = l;
 
         try {
-            ResultLogger resultLogger = ResultLogger.getResultLogger("Sudoku-Id-" + sudoku.getId());
+            ResultLogger resultLogger = ResultLogger.getResultLogger("Sudoku-Id-" + puzzle.getId());
             firstSolutionTime = firstSolutionTime - startTime;
             long totalTime = endTime - startTime;
             resultLogger.saveToLog(firstSolutionTime, firstSolutionNodes, firstSolutionReturns,
@@ -83,6 +78,6 @@ public class BacktrackingSudokuSolver {
             e.printStackTrace();
         }
 
-        return solvedSudokus;
+        return solvedPuzzles;
     }
 }
