@@ -1,7 +1,6 @@
 package si.lista2.utils;
 
 import si.lista2.model.jolka.Jolka;
-import si.lista2.model.sudoku.Sudoku;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,8 +9,10 @@ import java.util.List;
 public class JolkaParser extends Parser {
     private List<String> puzzleFileContent;
     private List<String> wordsFileContent;
+    private int id;
 
-    public JolkaParser(String[] fileNames) {
+    public JolkaParser(String[] fileNames, int id) {
+        this.id = id;
         File[] files = new File[fileNames.length];
         for (int i = 0; i < files.length; i++) {
             files[i] = new File(fileNames[i]);
@@ -98,7 +99,7 @@ public class JolkaParser extends Parser {
                 }
             }
         }
-        return new Jolka(words, gaps);
+        return new Jolka(id, words, gaps, stage);
     }
 
 

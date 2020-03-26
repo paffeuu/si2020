@@ -1,6 +1,6 @@
 package si.lista2.model.sudoku;
 
-import si.lista2.exception.FieldSetException;
+import si.lista2.exception.GapJustFilledException;
 import si.lista2.exception.SudokuParseException;
 import si.lista2.model.Puzzle;
 
@@ -85,7 +85,7 @@ public class Sudoku implements Puzzle {
         if (stage[gap] == null) {
             stage[gap] = value;
         } else {
-            throw new FieldSetException("Field from gap [" + gap + "] set.");
+            throw new GapJustFilledException("Field from gap [" + gap + "] set.");
         }
     }
 
@@ -149,7 +149,7 @@ public class Sudoku implements Puzzle {
 
     @Override
     public String toString() {
-        return "Id: " + id + "\n" +
+        return "Sudoku\nId: " + id + "\n" +
                 "Difficulty: " + difficulty +"\n" +
                 getPrintableVisualization();
     }
