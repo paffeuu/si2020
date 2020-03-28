@@ -15,11 +15,16 @@ public class ResultLogger {
         return new ResultLogger(params);
     }
 
-    public void saveToLog(long firstSolutionTime, int firstSolutionNodes, int firstSolutionReturns,
-            long totalTime, int totalNodes, int totalReturns, int solutionsFound) throws IOException {
+    public void saveToLog(String puzzleName, String puzzleId, long firstSolutionTime, int firstSolutionNodes,
+                          int firstSolutionReturns, long totalTime, int totalNodes, int totalReturns,
+                          int solutionsFound) throws IOException {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Sudoku\n");
+        sb.append(puzzleName);
+        sb.append("\n");
+        sb.append("Id: ");
+        sb.append(puzzleId);
+        sb.append("\n");
         sb.append("Czas do znalezienia pierwszego rozwiązania: ");
         sb.append(firstSolutionTime);
         sb.append(" ms\n");

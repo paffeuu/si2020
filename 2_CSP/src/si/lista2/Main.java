@@ -27,7 +27,8 @@ public class Main {
 //                .forEach(list -> {
 //                    list.forEach(System.out::println);
 //                });
-        JolkaParser jolkaParser = new JolkaParser(new String[] {"data//Jolka//puzzle1", "data//Jolka//words1"}, 1);
+        JolkaParser jolkaParser = new JolkaParser(new String[] {"data//Jolka//puzzle", "data//Jolka//words"},
+                0);
         Jolka jolka = jolkaParser.parseFileContent();
         backtrackingSolver.solve(jolka);
     }

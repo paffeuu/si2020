@@ -15,7 +15,7 @@ public class JolkaParser extends Parser {
         this.id = id;
         File[] files = new File[fileNames.length];
         for (int i = 0; i < files.length; i++) {
-            files[i] = new File(fileNames[i]);
+            files[i] = new File(fileNames[i] + id);
         }
         puzzleFileContent = loadFileContent(files[0]);
         wordsFileContent = loadFileContent(files[1]);

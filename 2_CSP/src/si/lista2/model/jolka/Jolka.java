@@ -3,18 +3,20 @@ package si.lista2.model.jolka;
 import si.lista2.exception.UndefinedWordException;
 import si.lista2.model.Puzzle;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Jolka implements Puzzle {
     private int id;
     private List<String> words;
+    private List<String> wordsImmutable;
     private List<Integer[]> gaps;
     private char[][] stage;
 
     public Jolka(int id, List<String> words, List<Integer[]> gaps, char[][] stage) {
         this.id = id;
         this.words = words;
+        this.wordsImmutable = new ArrayList<>(words);
         this.gaps = gaps;
         this.stage = stage;
     }
@@ -26,14 +28,19 @@ public class Jolka implements Puzzle {
     }
 
     @Override
+    public List getInitialDomain() {
+        return wordsImmutable;
+    }
+
+    @Override
     public boolean checkConstraints(Object gap, Object value) {
         Integer[] gapp = (Integer[]) gap;
         String word = (String) value;
         // horizontal
         if (gapp[2].equals(gapp[3])) {
-            int length = gapp[1] - gapp[0];
+            int length = gapp[1] - gapp[0] + 1;
             for (int i = 0; i < length; i++) {
-                char ch = stage[gapp[0] + i][gapp[2]];
+                char ch = stage[gapp[2]][gapp[0] + i];
                 if (ch != '_' && ch != word.charAt(i)) {
                     return false;
                 }
@@ -41,9 +48,9 @@ public class Jolka implements Puzzle {
         }
         // vertical
         else if (gapp[0].equals(gapp[1])) {
-            int length = gapp[3] - gapp[2];
+            int length = gapp[3] - gapp[2] + 1;
             for (int j = 0; j < length; j++) {
-                char ch = stage[gapp[0]][gapp[2] + j];
+                char ch = stage[gapp[2] + j][gapp[0]];
                 if (ch != '_' && ch != word.charAt(j)) {
                     return false;
                 }
@@ -59,15 +66,16 @@ public class Jolka implements Puzzle {
         // horizontal
         if (gapp[2].equals(gapp[3])) {
             for (int i = 0; i < word.length(); i++) {
-                stage[gapp[0] + i][gapp[2]] = word.charAt(i);
+                stage[gapp[2]][gapp[0] + i] = word.charAt(i);
             }
         }
         // vertical
         else if (gapp[0].equals(gapp[1])) {
             for (int j = 0; j < word.length(); j++) {
-                stage[gapp[0]][gapp[2] + j] = word.charAt(j);
+                stage[gapp[2] + j][gapp[0]] = word.charAt(j);
             }
         }
+        words.remove(value);
     }
 
     @Override
@@ -76,55 +84,56 @@ public class Jolka implements Puzzle {
         StringBuilder sb = new StringBuilder();
         // horizontal
         if (gapp[2].equals(gapp[3])) {
-            int length = gapp[1] - gapp[0];
+            int length = gapp[1] - gapp[0] + 1;
             for (int i = 0; i < length; i++) {
-                char ch = stage[gapp[0] + i][gapp[2]];
+                char ch = stage[gapp[2]][gapp[0] + i];
                 sb.append(ch);
                 boolean remove = true;
                 int vertChUpper = gapp[2] - 1;
                 if (vertChUpper >= 0) {
-                    if (stage[gapp[0] + i][gapp[2] - 1] != '_' && stage[gapp[0] + i][gapp[2] - 1] != '#') {
+                    if (stage[gapp[2] - 1][gapp[0] + i] != '_' && stage[gapp[2] - 1][gapp[0] + i] != '#') {
                         remove = false;
                     }
                 }
                 int vertChLower = gapp[2] + 1;
                 if (vertChLower >= 0) {
-                    if (stage[gapp[0] + i][gapp[2] + 1] != '_' && stage[gapp[0] + i][gapp[2] + 1] != '#') {
+                    if (stage[gapp[2] + 1][gapp[0] + i] != '_' && stage[gapp[2] + 1][gapp[0] + i] != '#') {
                         remove = false;
                     }
                 }
                 if (remove) {
-                    stage[gapp[0] + i][gapp[2]] = '_';
+                    stage[gapp[2]][gapp[0] + i] = '_';
                 }
             }
         }
         // vertical
         else if (gapp[0].equals(gapp[1])) {
-            int length = gapp[3] - gapp[2];
+            int length = gapp[3] - gapp[2] + 1;
             for (int j = 0; j < length; j++) {
-                char ch = stage[gapp[0]][gapp[2] + j];
+                char ch = stage[gapp[2] + j][gapp[0]];
                 sb.append(ch);
                 boolean remove = true;
                 int horChLeft = gapp[0] - 1;
                 if (horChLeft >= 0) {
-                    if (stage[gapp[0] - 1][gapp[2] + j] != '_' && stage[gapp[0] - 1][gapp[2] + j] != '#') {
+                    if (stage[gapp[2] + j][gapp[0] - 1] != '_' && stage[gapp[2] + j][gapp[0] - 1] != '#') {
                         remove = false;
                     }
                 }
                 int horChRight = gapp[0] + 1;
                 if (horChRight >= 0) {
-                    if (stage[gapp[0] + 1][gapp[2] + j] != '_' && stage[gapp[0] + 1][gapp[2] + j] != '#') {
+                    if (stage[gapp[2] + j][gapp[0] + 1] != '_' && stage[gapp[2] + j][gapp[0] + 1] != '#') {
                         remove = false;
                     }
                 }
                 if (remove) {
-                    stage[gapp[0]][gapp[2] + j] = '_';
+                    stage[gapp[2] + j][gapp[0]] = '_';
                 }
             }
         }
         String word = sb.toString();
-        for (int k = 0; k < words.size(); k++) {
-            if (word.equals(words.get(k))) {
+        for (int k = 0; k < wordsImmutable.size(); k++) {
+            if (word.equals(wordsImmutable.get(k))) {
+                words.add(0, word);
                 return k;
             }
         }
@@ -133,8 +142,7 @@ public class Jolka implements Puzzle {
 
     @Override
     public Puzzle createSolution() {
-        System.out.println(this);
-        return null;
+        return this;
     }
 
     @Override
@@ -145,6 +153,11 @@ public class Jolka implements Puzzle {
     @Override
     public List getGaps() {
         return gaps;
+    }
+
+    @Override
+    public boolean shouldStopSearching() {
+        return true;
     }
 
     private String getPrintableVisualization() {

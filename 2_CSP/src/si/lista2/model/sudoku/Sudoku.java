@@ -106,8 +106,18 @@ public class Sudoku implements Puzzle {
     }
 
     @Override
+    public boolean shouldStopSearching() {
+        return true;
+    }
+
+    @Override
     public List<Object> getDomain() {
         return IntStream.range(1, 10).boxed().collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Object> getInitialDomain() {
+        return getDomain();
     }
 
     @Override

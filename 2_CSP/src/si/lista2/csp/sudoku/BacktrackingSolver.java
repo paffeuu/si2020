@@ -22,6 +22,7 @@ public class BacktrackingSolver {
         int firstSolutionReturns = -1;
         int k = 0;
         int l = 0;
+        boolean shouldStopSearching = false;
         do {
             for (int i = 0; i < domain.size(); i++) {
                 if (i <= lastCheckedIndex) {
@@ -45,7 +46,11 @@ public class BacktrackingSolver {
                         }
                         Puzzle solvedPuzzle = puzzle.createSolution();
                         solvedPuzzles.add(solvedPuzzle);
+                        if (shouldStopSearching = puzzle.shouldStopSearching()) {
+                            break;
+                        }
                         puzzle.releaseGap(gap);
+
                     }
                 }
             }
@@ -63,17 +68,19 @@ public class BacktrackingSolver {
             } else {
                 lastCheckedIndex = Integer.MIN_VALUE;
             }
-        } while (gapsIterator.hasPrevious());
+        } while (gapsIterator.hasPrevious() && !shouldStopSearching);
         long endTime = System.currentTimeMillis();
         int endNodes = k;
         int endReturns = l;
 
         try {
-            ResultLogger resultLogger = ResultLogger.getResultLogger("Sudoku-Id-" + puzzle.getId());
+            ResultLogger resultLogger = ResultLogger.getResultLogger(puzzle.getClass().getSimpleName() + "-Id-" + puzzle.getId());
             firstSolutionTime = firstSolutionTime - startTime;
             long totalTime = endTime - startTime;
-            resultLogger.saveToLog(firstSolutionTime, firstSolutionNodes, firstSolutionReturns,
-                    totalTime, endNodes, endReturns, solutionsFound);
+            String puzzleName = puzzle.getClass().getSimpleName();
+            String puzzleId = puzzle.getId();
+            resultLogger.saveToLog(puzzleName, puzzleId, firstSolutionTime, firstSolutionNodes,
+                    firstSolutionReturns, totalTime, endNodes, endReturns, solutionsFound);
         } catch (IOException e) {
             e.printStackTrace();
         }
