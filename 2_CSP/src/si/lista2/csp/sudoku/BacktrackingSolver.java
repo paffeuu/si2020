@@ -22,7 +22,6 @@ public class BacktrackingSolver {
         int firstSolutionReturns = -1;
         int k = 0;
         int l = 0;
-        boolean shouldStopSearching = false;
         do {
             for (int i = 0; i < domain.size(); i++) {
                 if (i <= lastCheckedIndex) {
@@ -46,11 +45,7 @@ public class BacktrackingSolver {
                         }
                         Puzzle solvedPuzzle = puzzle.createSolution();
                         solvedPuzzles.add(solvedPuzzle);
-                        if (shouldStopSearching = puzzle.shouldStopSearching()) {
-                            break;
-                        }
                         puzzle.releaseGap(gap);
-
                     }
                 }
             }
@@ -62,13 +57,13 @@ public class BacktrackingSolver {
                     k++;
                     l++;
                 }
-                if (gapsIterator.hasPrevious()) {
+                if (gapsIterator.hasPrevious() || lastCheckedIndex < domain.size() - 1) {
                     gapsIterator.next();
                 }
             } else {
                 lastCheckedIndex = Integer.MIN_VALUE;
             }
-        } while (gapsIterator.hasPrevious() && !shouldStopSearching);
+        } while (lastCheckedIndex < domain.size() - 1 || gapsIterator.hasPrevious());
         long endTime = System.currentTimeMillis();
         int endNodes = k;
         int endReturns = l;

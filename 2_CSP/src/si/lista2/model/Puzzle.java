@@ -11,5 +11,4 @@ public interface Puzzle {
     Puzzle createSolution();
     String getId();
     List<Object> getGaps();
-    boolean shouldStopSearching();
 }
