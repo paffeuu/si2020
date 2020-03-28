@@ -1,11 +1,10 @@
 package si.lista2.model.jolka;
 
+import si.lista2.exception.IncorrectGapException;
 import si.lista2.exception.UndefinedWordException;
 import si.lista2.model.Puzzle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Jolka implements Puzzle {
     protected int id;
@@ -22,7 +21,15 @@ public class Jolka implements Puzzle {
         this.stage = stage;
     }
 
+    public void useSortFromTheLongestHeuristic() {
+        this.words.sort(Comparator.comparingInt(String::length));
+        Collections.reverse(this.words);
+        this.wordsImmutable = new ArrayList<>(words);
 
+
+        this.gaps.sort(Comparator.comparingInt(this::getGapLength));
+        Collections.reverse(this.gaps);
+    }
 
     @Override
     public List getDomain() {
@@ -40,7 +47,7 @@ public class Jolka implements Puzzle {
         String word = (String) value;
         // horizontal
         if (gapp[2].equals(gapp[3])) {
-            int length = gapp[1] - gapp[0] + 1;
+            int length = getGapLength(gapp);
             if (length != word.length()) {
                 return false;
             }
@@ -53,7 +60,7 @@ public class Jolka implements Puzzle {
         }
         // vertical
         else if (gapp[0].equals(gapp[1])) {
-            int length = gapp[3] - gapp[2] + 1;
+            int length = getGapLength(gapp);
             if (length != word.length()) {
                 return false;
             }
@@ -92,23 +99,10 @@ public class Jolka implements Puzzle {
         StringBuilder sb = new StringBuilder();
         // horizontal
         if (gapp[2].equals(gapp[3])) {
-            int length = gapp[1] - gapp[0] + 1;
+            int length = getGapLength(gapp);
             for (int i = 0; i < length; i++) {
                 char ch = stage[gapp[2]][gapp[0] + i];
                 sb.append(ch);
-//                boolean remove = true;
-//                int vertChUpper = gapp[2] - 1;
-//                if (vertChUpper >= 0) {
-//                    if (stage[gapp[2] - 1][gapp[0] + i] != '_' && stage[gapp[2] - 1][gapp[0] + i] != '#') {
-//                        remove = false;
-//                    }
-//                }
-//                int vertChLower = gapp[2] + 1;
-//                if (vertChLower < stage.length) {
-//                    if (stage[gapp[2] + 1][gapp[0] + i] != '_' && stage[gapp[2] + 1][gapp[0] + i] != '#') {
-//                        remove = false;
-//                    }
-//                }
                 if (canBeRemoved(gapp[0] + i, gapp[2], gapp)) {
                     stage[gapp[2]][gapp[0] + i] = '_';
                 }
@@ -116,23 +110,10 @@ public class Jolka implements Puzzle {
         }
         // vertical
         else if (gapp[0].equals(gapp[1])) {
-            int length = gapp[3] - gapp[2] + 1;
+            int length = getGapLength(gapp);
             for (int j = 0; j < length; j++) {
                 char ch = stage[gapp[2] + j][gapp[0]];
                 sb.append(ch);
-//                boolean remove = true;
-//                int horChLeft = gapp[0] - 1;
-//                if (horChLeft >= 0) {
-//                    if (stage[gapp[2] + j][gapp[0] - 1] != '_' && stage[gapp[2] + j][gapp[0] - 1] != '#') {
-//                        remove = false;
-//                    }
-//                }
-//                int horChRight = gapp[0] + 1;
-//                if (horChRight < stage[0].length) {
-//                    if (stage[gapp[2] + j][gapp[0] + 1] != '_' && stage[gapp[2] + j][gapp[0] + 1] != '#') {
-//                        remove = false;
-//                    }
-//                }
                 if (canBeRemoved(gapp[0], gapp[2] + j, gapp)) {
                     stage[gapp[2] + j][gapp[0]] = '_';
                 }
@@ -157,7 +138,7 @@ public class Jolka implements Puzzle {
             }
             // horizontal
             if (gapp[2].equals(gapp[3])) {
-                int length = gapp[1] - gapp[0] + 1;
+                int length = getGapLength(gapp);
                 for (int i = 0; i < length; i++) {
                     if (gapp[0] + i == gapX && gapp[2] == gapY) {
                         return false;
@@ -165,7 +146,7 @@ public class Jolka implements Puzzle {
                 }
             // vertical
             } else if (gapp[0].equals(gapp[1])) {
-                int length = gapp[3] - gapp[2] + 1;
+                int length = getGapLength(gapp);
                 for (int j = 0; j < length; j++) {
                     if (gapp[0] == gapX && gapp[2] + j == gapY) {
                         return false;
@@ -174,6 +155,15 @@ public class Jolka implements Puzzle {
             }
         }
         return true;
+    }
+
+    private int getGapLength(Integer[] gap) {
+        if (gap[2].equals(gap[3])) {
+            return gap[1] - gap[0] + 1;
+        } else if (gap[0].equals(gap[1])) {
+            return gap[3] - gap[2] + 1;
+        }
+        throw new IncorrectGapException();
     }
 
     @Override

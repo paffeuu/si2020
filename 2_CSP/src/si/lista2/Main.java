@@ -14,11 +14,11 @@ public class Main {
         List<Sudoku> sudokus = sudokuParser.parseFileContent();
         BacktrackingSolver backtrackingSolver = new BacktrackingSolver();
         System.out.println(backtrackingSolver.solve(sudokus.get(0)));
-        sudokus.stream()
-                .map(backtrackingSolver::solve)
-                .forEach(list -> {
-                    list.forEach(System.out::println);
-                });
+//        sudokus.stream()
+//                .map(backtrackingSolver::solve)
+//                .forEach(list -> {
+//                    list.forEach(System.out::println);
+//                });
 
 //        BacktrackingSudokuSolver backtrackingSudokuSolver = new BacktrackingSudokuSolver();
 //        backtrackingSudokuSolver.solve(sudokus.get(0));
@@ -28,8 +28,9 @@ public class Main {
 //                    list.forEach(System.out::println);
 //                });
         JolkaParser jolkaParser = new JolkaParser(new String[] {"data//Jolka//puzzle", "data//Jolka//words"},
-                1);
+                4);
         Jolka jolka = jolkaParser.parseFileContent();
+        jolka.useSortFromTheLongestHeuristic();
         System.out.println(backtrackingSolver.solve(jolka));
     }
 }
