@@ -67,6 +67,7 @@ public class ForwardCheckingSolver implements Solver {
                 }
             } else {
                 lastCheckedIndex = Integer.MIN_VALUE;
+                lastCheckedIndex = Integer.MIN_VALUE;
             }
         } while (lastCheckedIndex < domain.size() - 1 || gapsIterator.hasPrevious());
         long endTime = System.currentTimeMillis();
@@ -91,8 +92,7 @@ public class ForwardCheckingSolver implements Solver {
     private boolean checkDomains(Puzzle puzzle, Object gap) {
         ListIterator<Object> gapsIterator = puzzle.getGaps().listIterator();
         List<Object> gaps = puzzle.getGaps();
-        int index = gaps.indexOf(gap) + 1;
-        for (int m = 0; m < gaps.size(); m++) {
+        for (int m = gaps.indexOf(gap) + 1; m < gaps.size(); m++) {
             List<Object> domain = puzzle.getDomain();
             boolean domainNotEmpty = false;
             for (int n = 0; n < domain.size(); n++) {

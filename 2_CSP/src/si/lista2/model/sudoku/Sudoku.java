@@ -4,9 +4,7 @@ import si.lista2.exception.GapJustFilledException;
 import si.lista2.exception.SudokuParseException;
 import si.lista2.model.Puzzle;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -15,6 +13,7 @@ public class Sudoku implements Puzzle {
     protected int difficulty;
     protected Integer[] stage;
     protected List<Integer> gaps;
+    protected List<Integer> domain;
 
     private int pointer = 0;
 
@@ -23,6 +22,7 @@ public class Sudoku implements Puzzle {
         this.gaps = new ArrayList<>();
         this.id = id;
         this.difficulty = (int) difficulty;
+        this.domain = IntStream.range(1, 10).boxed().collect(Collectors.toList());
     }
 
     public boolean checkConstraints(int gap, int value) {
@@ -93,10 +93,10 @@ public class Sudoku implements Puzzle {
     public int unsetField(int gap) {
         int value = stage[gap];
         stage[gap] = null;
-        return value - 1;
+        return domain.indexOf(value);
     }
 
-    public void useSortFromTheMostFullRowHeuristics() {
+    public void useSortGapsFromTheMostFullColumnHeuristics() {
         List<List<Integer>> tempGapList = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
             tempGapList.add(new ArrayList<>());
@@ -107,6 +107,25 @@ public class Sudoku implements Puzzle {
         gaps = tempGapList.stream()
                 .sorted(Comparator.comparingInt(List::size))
                 .flatMap(List::stream)
+//                .sorted(Collections.reverseOrder())
+                .collect(Collectors.toList());
+    }
+
+    public void useSortDomainFromTheLeastFrequentValues() {
+        int[] valueFrequency = new int[9];
+        for (int i = 0; i < 81; i++) {
+            if (stage[i] != null) {
+                valueFrequency[stage[i] - 1]++;
+            }
+        }
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
+        for (int j = 0; j < 9; j++) {
+            frequencyMap.put(j + 1, valueFrequency[j]);
+        }
+        domain = frequencyMap.entrySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -121,8 +140,8 @@ public class Sudoku implements Puzzle {
     }
 
     @Override
-    public List<Object> getDomain() {
-        return IntStream.range(1, 10).boxed().collect(Collectors.toList());
+    public List getDomain() {
+        return domain;
     }
 
     @Override

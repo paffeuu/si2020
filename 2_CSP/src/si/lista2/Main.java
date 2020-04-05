@@ -2,9 +2,7 @@ package si.lista2;
 
 import si.lista2.csp.BacktrackingSolver;
 import si.lista2.csp.ForwardCheckingSolver;
-import si.lista2.model.jolka.Jolka;
 import si.lista2.model.sudoku.Sudoku;
-import si.lista2.utils.JolkaParser;
 import si.lista2.utils.SudokuParser;
 
 import java.util.List;
@@ -15,13 +13,16 @@ public class Main {
         List<Sudoku> sudokus = sudokuParser.parseFileContent();
         Sudoku easySudoku = sudokus.get(0);
 
-        BacktrackingSolver backtrackingSolver = new BacktrackingSolver();
-        System.out.println(backtrackingSolver.solve(sudokus.get(0)));
+//        BacktrackingSolver backtrackingSolver = new BacktrackingSolver();
+//        System.out.println(backtrackingSolver.solve(sudokus.get(0)));
 
         ForwardCheckingSolver forwardCheckingSolver = new ForwardCheckingSolver();
         System.out.println(forwardCheckingSolver.solve(easySudoku));
 
-        easySudoku.useSortFromTheMostFullRowHeuristics();
+        easySudoku.useSortGapsFromTheMostFullColumnHeuristics();
+        System.out.println(forwardCheckingSolver.solve(easySudoku));
+
+        easySudoku.useSortDomainFromTheLeastFrequentValues();
         System.out.println(forwardCheckingSolver.solve(easySudoku));
 //        sudokus.stream()
 //                .map(forwardCheckingSolver::solve)
