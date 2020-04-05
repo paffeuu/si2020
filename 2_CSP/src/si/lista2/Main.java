@@ -1,6 +1,7 @@
 package si.lista2;
 
 import si.lista2.csp.BacktrackingSolver;
+import si.lista2.csp.ForwardCheckingSolver;
 import si.lista2.model.jolka.Jolka;
 import si.lista2.model.sudoku.Sudoku;
 import si.lista2.utils.JolkaParser;
@@ -12,13 +13,21 @@ public class Main {
     public static void main(String[] args) {
         SudokuParser sudokuParser = new SudokuParser("data//Sudoku.csv");
         List<Sudoku> sudokus = sudokuParser.parseFileContent();
+
         BacktrackingSolver backtrackingSolver = new BacktrackingSolver();
-//        System.out.println(backtrackingSolver.solve(sudokus.get(0)));
+        System.out.println(backtrackingSolver.solve(sudokus.get(0)));
+
+        ForwardCheckingSolver forwardCheckingSolver = new ForwardCheckingSolver();
+        System.out.println(forwardCheckingSolver.solve(sudokus.get(0)));
         sudokus.stream()
-                .map(backtrackingSolver::solve)
+                .map(forwardCheckingSolver::solve)
                 .forEach(list -> {
                     list.forEach(System.out::println);
                 });
+
+
+//        System.out.println(backtrackingSolver.solve(sudokus.get(0)));
+
 
 //        BacktrackingSudokuSolver backtrackingSudokuSolver = new BacktrackingSudokuSolver();
 //        backtrackingSudokuSolver.solve(sudokus.get(0));

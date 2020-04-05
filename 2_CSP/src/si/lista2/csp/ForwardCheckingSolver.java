@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class BacktrackingSolver implements Solver {
+public class ForwardCheckingSolver implements Solver {
+
     public List<Puzzle> solve(Puzzle puzzle) {
         long startTime = System.currentTimeMillis();
         List<Puzzle> solvedPuzzles = new ArrayList<>();
@@ -31,20 +32,24 @@ public class BacktrackingSolver implements Solver {
                 lastCheckedIndex = i;
                 if (puzzle.checkConstraints(gap, nextValue)) {
                     puzzle.fillGap(gap, nextValue);
-                    k++;
-                    if (gapsIterator.hasNext()) {
-                        gap = gapsIterator.next();
-                        lastCheckedIndex = Integer.MIN_VALUE;
-                        break;
-                    } else {
-                        if (solutionsFound == 0) {
-                            firstSolutionTime = System.currentTimeMillis();
-                            firstSolutionNodes = k;
-                            firstSolutionReturns = l;
+                    if (checkDomains(puzzle, gap)) {
+                        k++;
+                        if (gapsIterator.hasNext()) {
+                            gap = gapsIterator.next();
+                            lastCheckedIndex = Integer.MIN_VALUE;
+                            break;
+                        } else {
+                            if (solutionsFound == 0) {
+                                firstSolutionTime = System.currentTimeMillis();
+                                firstSolutionNodes = k;
+                                firstSolutionReturns = l;
+                            }
                             solutionsFound++;
+                            Puzzle solvedPuzzle = puzzle.createSolution();
+                            solvedPuzzles.add(solvedPuzzle);
+                            puzzle.releaseGap(gap);
                         }
-                        Puzzle solvedPuzzle = puzzle.createSolution();
-                        solvedPuzzles.add(solvedPuzzle);
+                    } else {
                         puzzle.releaseGap(gap);
                     }
                 }
@@ -81,5 +86,25 @@ public class BacktrackingSolver implements Solver {
         }
 
         return solvedPuzzles;
+    }
+
+    private boolean checkDomains(Puzzle puzzle, Object gap) {
+        ListIterator<Object> gapsIterator = puzzle.getGaps().listIterator();
+        List<Object> gaps = puzzle.getGaps();
+        int index = gaps.indexOf(gap) + 1;
+        for (int m = 0; m < gaps.size(); m++) {
+            List<Object> domain = puzzle.getDomain();
+            boolean domainNotEmpty = false;
+            for (int n = 0; n < domain.size(); n++) {
+                if (puzzle.checkConstraints(gaps.get(m), domain.get(n))) {
+                    domainNotEmpty = true;
+                    break;
+                }
+            }
+            if (!domainNotEmpty) {
+                return false;
+            }
+        }
+        return true;
     }
 }

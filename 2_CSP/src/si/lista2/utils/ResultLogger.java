@@ -48,6 +48,7 @@ public class ResultLogger {
         String logStr = sb.toString();
         fw.write(logStr);
         fw.flush();
+        System.out.println(logStr);
     }
 
     private String getFilename() {
