@@ -5,6 +5,7 @@ import si.lista2.exception.SudokuParseException;
 import si.lista2.model.Puzzle;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -93,6 +94,20 @@ public class Sudoku implements Puzzle {
         int value = stage[gap];
         stage[gap] = null;
         return value - 1;
+    }
+
+    public void useSortFromTheMostFullRowHeuristics() {
+        List<List<Integer>> tempGapList = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            tempGapList.add(new ArrayList<>());
+        }
+        for (Integer gap : gaps) {
+            tempGapList.get(gap % 9).add(gap);
+        }
+        gaps = tempGapList.stream()
+                .sorted(Comparator.comparingInt(List::size))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     public SolvedSudoku createSolution() {

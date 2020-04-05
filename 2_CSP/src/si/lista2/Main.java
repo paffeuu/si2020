@@ -13,17 +13,21 @@ public class Main {
     public static void main(String[] args) {
         SudokuParser sudokuParser = new SudokuParser("data//Sudoku.csv");
         List<Sudoku> sudokus = sudokuParser.parseFileContent();
+        Sudoku easySudoku = sudokus.get(0);
 
         BacktrackingSolver backtrackingSolver = new BacktrackingSolver();
         System.out.println(backtrackingSolver.solve(sudokus.get(0)));
 
         ForwardCheckingSolver forwardCheckingSolver = new ForwardCheckingSolver();
-        System.out.println(forwardCheckingSolver.solve(sudokus.get(0)));
-        sudokus.stream()
-                .map(forwardCheckingSolver::solve)
-                .forEach(list -> {
-                    list.forEach(System.out::println);
-                });
+        System.out.println(forwardCheckingSolver.solve(easySudoku));
+
+        easySudoku.useSortFromTheMostFullRowHeuristics();
+        System.out.println(forwardCheckingSolver.solve(easySudoku));
+//        sudokus.stream()
+//                .map(forwardCheckingSolver::solve)
+//                .forEach(list -> {
+//                    list.forEach(System.out::println);
+//                });
 
 
 //        System.out.println(backtrackingSolver.solve(sudokus.get(0)));
