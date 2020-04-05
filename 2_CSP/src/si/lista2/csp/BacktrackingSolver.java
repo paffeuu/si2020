@@ -1,4 +1,4 @@
-package si.lista2.csp.sudoku;
+package si.lista2.csp;
 
 import si.lista2.model.Puzzle;
 import si.lista2.utils.ResultLogger;
