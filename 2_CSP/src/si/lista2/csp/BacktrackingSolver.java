@@ -41,8 +41,8 @@ public class BacktrackingSolver implements Solver {
                             firstSolutionTime = System.currentTimeMillis();
                             firstSolutionNodes = k;
                             firstSolutionReturns = l;
-                            solutionsFound++;
                         }
+                        solutionsFound++;
                         Puzzle solvedPuzzle = puzzle.createSolution();
                         solvedPuzzles.add(solvedPuzzle);
                         puzzle.releaseGap(gap);
