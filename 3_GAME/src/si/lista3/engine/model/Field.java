@@ -11,6 +11,12 @@ public class Field {
         this.state = State.EMPTY;
     }
 
+    public Field clone() {
+        Field clonedField = new Field(row, col);
+        clonedField.setState(state);
+        return clonedField;
+    }
+
     public int getCol() {
         return col;
     }

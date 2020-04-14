@@ -174,6 +174,16 @@ public class Connect4Engine {
         return false;
     }
 
+    private Field[][] cloneStage() {
+        Field[][] clonedStage = new Field[ROWS][COLS];
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                clonedStage[i][j] = stage[i][j].clone();
+            }
+        }
+        return clonedStage;
+    }
+
     public void printStage() {
         StringBuilder sb = new StringBuilder();
         sb.append("Status: ");
