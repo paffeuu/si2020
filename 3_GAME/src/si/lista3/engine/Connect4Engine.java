@@ -2,6 +2,7 @@ package si.lista3.engine;
 
 import si.lista3.engine.model.Field;
 import si.lista3.exception.FieldNotEmptyException;
+import si.lista3.exception.FieldOutOfStageException;
 import si.lista3.exception.GameFinishedException;
 import si.lista3.exception.UnauthorizedMoveException;
 
@@ -34,6 +35,10 @@ public class Connect4Engine {
             throw new UnauthorizedMoveException(
                     "New move of player " + player + " registered! Expected move of player "+ nextMovePlayer);
         }
+        if (x >= COLS || y >= ROWS) {
+            throw new FieldOutOfStageException(
+                    "Requested move refers to field[x = " + x + ", y = " + y + "] which does not belong to stage.");
+        }
         if (stage[y][x].getState() != Field.State.EMPTY) {
             throw new FieldNotEmptyException(stage[y][x] + " is not empty!");
         }
@@ -42,7 +47,7 @@ public class Connect4Engine {
         } else if (player == 2) {
             stage[y][x].setState(Field.State.PLAYER_O);
         }
-        if (!checkIfGameIsFinished()) {
+        if (!checkIfGameIsFinished(x, y, player)) {
             nextMovePlayer = nextMovePlayer != 1 ? 1 : 2;
         }
     }
@@ -55,7 +60,7 @@ public class Connect4Engine {
         //TODO: finish the game
      }
 
-    private boolean checkIfGameIsFinished() {
+    private boolean checkIfGameIsFinished(int x, int y, int player) {
         boolean allFieldsOccupied =
                 Arrays.stream(stage)
                 .flatMap(Arrays::stream)
@@ -64,7 +69,60 @@ public class Connect4Engine {
             finishGame(0);
             return true;
         }
-        //TODO: another conditions
+        if (checkIfPlayerWon(x, y, player)) {
+            finishGame(player);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkIfPlayerWon(int x, int y, int player) {
+        Field.State desirableState = (player == 1) ? Field.State.PLAYER_X : Field.State.PLAYER_O;
+        // horizontal
+        int matchesX = 0;
+        for (int k = 0; k < 4; k++) {
+            int startX = x - k;
+            if (startX < 0) {
+                continue;
+            }
+            matchesX = 0;
+            for (int l = 0; l < 4; l++) {
+                if (startX + l >= COLS) {
+                    break;
+                }
+                if (stage[y][startX + l].getState() == desirableState) {
+                    matchesX++;
+                } else {
+                    break;
+                }
+            }
+            if (matchesX == 4) {
+                return true;
+            }
+        }
+
+        // horizontal
+        int matchesY = 0;
+        for (int k = 0; k < 4; k++) {
+            int startY = y - k;
+            if (startY < 0) {
+                continue;
+            }
+            matchesY = 0;
+            for (int l = 0; l < 4; l++) {
+                if (startY + l >= ROWS) {
+                    break;
+                }
+                if (stage[startY + l][x].getState() == desirableState) {
+                    matchesY++;
+                } else {
+                    break;
+                }
+            }
+            if (matchesY == 4) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -126,4 +184,11 @@ public class Connect4Engine {
         System.out.println(sb.toString());
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public int getResult() {
+        return result;
+    }
 }
