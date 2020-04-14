@@ -229,16 +229,20 @@ public class Connect4Engine {
                 }
             }
             String row = new String(rowCh);
+            boolean threeFoundInThisRow = false;
             for (String desiredString : desiredStringThree) {
                 if (row.contains(desiredString)) {
                     horizontalThrees++;
+                    threeFoundInThisRow = true;
                     break;
                 }
             }
-            for (String desiredString : desiredStringTwo) {
-                if (row.contains(desiredString)) {
-                    horizontalTwos++;
-                    break;
+            if (!threeFoundInThisRow) {
+                for (String desiredString : desiredStringTwo) {
+                    if (row.contains(desiredString)) {
+                        horizontalTwos++;
+                        break;
+                    }
                 }
             }
         }
@@ -262,16 +266,20 @@ public class Connect4Engine {
                 }
             }
             String col = new String(colCh);
+            boolean threeFoundInThisRow = false;
             for (String desiredString : desiredStringThree) {
                 if (col.contains(desiredString)) {
                     verticalThrees++;
+                    threeFoundInThisRow = true;
                     break;
                 }
             }
-            for (String desiredString : desiredStringTwo) {
-                if (col.contains(desiredString)) {
-                    verticalTwos++;
-                    break;
+            if (!threeFoundInThisRow) {
+                for (String desiredString : desiredStringTwo) {
+                    if (col.contains(desiredString)) {
+                        verticalTwos++;
+                        break;
+                    }
                 }
             }
         }
@@ -303,16 +311,20 @@ public class Connect4Engine {
                 }
             }
             String diagonal = new String(diagCh);
+            boolean threeFoundInThisRow = false;
             for (String desiredString : desiredStringThree) {
                 if (diagonal.contains(desiredString)) {
                     diagonalSlashThrees++;
+                    threeFoundInThisRow = true;
                     break;
                 }
             }
-            for (String desiredString : desiredStringTwo) {
-                if (diagonal.contains(desiredString)) {
-                    diagonalSlashTwos++;
-                    break;
+            if (!threeFoundInThisRow) {
+                for (String desiredString : desiredStringTwo) {
+                    if (diagonal.contains(desiredString)) {
+                        diagonalSlashTwos++;
+                        break;
+                    }
                 }
             }
         }
@@ -344,16 +356,20 @@ public class Connect4Engine {
                 }
             }
             String diagonal = new String(diagCh);
+            boolean threeFoundInThisRow = false;
             for (String desiredString : desiredStringThree) {
                 if (diagonal.contains(desiredString)) {
                     diagonalBackslashThrees++;
+                    threeFoundInThisRow = true;
                     break;
                 }
             }
-            for (String desiredString : desiredStringTwo) {
-                if (diagonal.contains(desiredString)) {
-                    diagonalBackslashTwos++;
-                    break;
+            if (!threeFoundInThisRow) {
+                for (String desiredString : desiredStringTwo) {
+                    if (diagonal.contains(desiredString)) {
+                        diagonalBackslashTwos++;
+                        break;
+                    }
                 }
             }
         }

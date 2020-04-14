@@ -254,7 +254,7 @@ public class Connect4EngineTest {
         engine.nextMove(2,2);
         engine.printStage();
         assertEquals(4, engine.evaluateStageForPlayer(1));
-        assertEquals(17, engine.evaluateStageForPlayer(2));
+        assertEquals(13, engine.evaluateStageForPlayer(2));
     }
 
 
