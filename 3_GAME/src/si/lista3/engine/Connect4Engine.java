@@ -1,8 +1,8 @@
 package si.lista3.engine;
 
 import si.lista3.engine.model.Field;
-import si.lista3.exception.FieldNotEmptyException;
-import si.lista3.exception.FieldOutOfStageException;
+import si.lista3.exception.ColumnFullException;
+import si.lista3.exception.ColumnOutOfStageException;
 import si.lista3.exception.GameFinishedException;
 import si.lista3.exception.UnauthorizedMoveException;
 
@@ -16,9 +16,14 @@ public class Connect4Engine {
     private boolean finished = false;
     private int result = -1;
 
+    private int[] columnPointers;
     private Field[][] stage;
 
     public Connect4Engine() {
+        columnPointers = new int[COLS];
+        for (int i = 0; i < COLS; i++) {
+            columnPointers[i] = ROWS - 1;
+        }
         stage = new Field[ROWS][COLS];
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
@@ -27,7 +32,7 @@ public class Connect4Engine {
         }
     }
 
-    public void nextMove(int x, int y, int player) {
+    public void nextMove(int col, int player) {
         if (finished) {
             throw new GameFinishedException();
         }
@@ -35,19 +40,21 @@ public class Connect4Engine {
             throw new UnauthorizedMoveException(
                     "New move of player " + player + " registered! Expected move of player "+ nextMovePlayer);
         }
-        if (x >= COLS || y >= ROWS) {
-            throw new FieldOutOfStageException(
-                    "Requested move refers to field[x = " + x + ", y = " + y + "] which does not belong to stage.");
+        if (col >= COLS) {
+            throw new ColumnOutOfStageException(
+                    "Requested move refers to column[x = " + col + "] which does not belong to stage.");
         }
-        if (stage[y][x].getState() != Field.State.EMPTY) {
-            throw new FieldNotEmptyException(stage[y][x] + " is not empty!");
+        int row = columnPointers[col];
+        if (columnPointers[col] == -1) {
+            throw new ColumnFullException("column[x = " + col + "] is full!");
         }
         if (player == 1) {
-            stage[y][x].setState(Field.State.PLAYER_X);
+            stage[row][col].setState(Field.State.PLAYER_X);
         } else if (player == 2) {
-            stage[y][x].setState(Field.State.PLAYER_O);
+            stage[row][col].setState(Field.State.PLAYER_O);
         }
-        if (!checkIfGameIsFinished(x, y, player)) {
+        columnPointers[col]--;
+        if (!checkIfGameIsFinished(col, row, player)) {
             nextMovePlayer = nextMovePlayer != 1 ? 1 : 2;
         }
     }
