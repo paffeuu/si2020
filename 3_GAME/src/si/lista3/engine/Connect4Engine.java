@@ -9,8 +9,8 @@ import si.lista3.exception.UnauthorizedMoveException;
 import java.util.Arrays;
 
 public class Connect4Engine {
-    public final static int COLS = 6;
-    public final static int ROWS = 7;
+    public final static int COLS = 7;
+    public final static int ROWS = 6;
 
     private int nextMovePlayer = 1;
     private boolean finished = false;
@@ -120,6 +120,54 @@ public class Connect4Engine {
                 }
             }
             if (matchesY == 4) {
+                return true;
+            }
+        }
+
+        // diagonal like backslash \
+        int matchesDBs = 0;
+        for (int k = 0; k < 4; k++) {
+            int startX = x - k;
+            int startY = y - k;
+            if (startX < 0 || startY < 0) {
+                continue;
+            }
+            matchesDBs = 0;
+            for (int l = 0; l < 4; l++) {
+                if (startX + l >= COLS || startY + l >= ROWS) {
+                    break;
+                }
+                if (stage[startY + l][startX + l].getState() == desirableState) {
+                    matchesDBs++;
+                } else {
+                    break;
+                }
+            }
+            if (matchesDBs == 4) {
+                return true;
+            }
+        }
+
+        // diagonal like slash /
+        int matchesDS = 0;
+        for (int k = 0; k < 4; k++) {
+            int startX = x + k;
+            int startY = y - k;
+            if (startX >= COLS || startY < 0) {
+                continue;
+            }
+            matchesDS = 0;
+            for (int l = 0; l < 4; l++) {
+                if (startX - l < 0 || startY + l >= ROWS) {
+                    break;
+                }
+                if (stage[startY + l][startX - l].getState() == desirableState) {
+                    matchesDS++;
+                } else {
+                    break;
+                }
+            }
+            if (matchesDS == 4) {
                 return true;
             }
         }
