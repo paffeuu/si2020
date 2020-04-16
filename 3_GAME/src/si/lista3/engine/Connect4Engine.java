@@ -113,7 +113,7 @@ public class Connect4Engine {
             }
         }
 
-        // horizontal
+        // vertical
         int matchesY = 0;
         for (int k = 0; k < 4; k++) {
             int startY = y - k;

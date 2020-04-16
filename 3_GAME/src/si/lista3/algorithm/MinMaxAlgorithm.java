@@ -34,7 +34,7 @@ public class MinMaxAlgorithm {
 
     private int minMax(Connect4Engine engine, int depth, int player, boolean max) {
         if (depth == 0) {
-            return evaluator.evaluateStage(engine.getStage(), player);
+            return evaluator.evaluateStage(engine, player);
         }
 
         if (max) {
@@ -48,7 +48,7 @@ public class MinMaxAlgorithm {
                         maxEval = eval;
                     }
                 } else {
-                    maxEval = 100;
+                    return evaluator.evaluateStage(engine, player);
                 }
             }
             return maxEval;

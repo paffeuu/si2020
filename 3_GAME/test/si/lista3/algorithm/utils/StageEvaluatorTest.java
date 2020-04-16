@@ -21,8 +21,8 @@ public class StageEvaluatorTest {
         engine.nextMove(4,1);
         engine.nextMove(2,2);
         engine.printStage();
-        assertEquals(4, evaluator.evaluateStage(engine.getStage(), 1));
-        assertEquals(13, evaluator.evaluateStage(engine.getStage(), 2));
+        assertEquals(4, evaluator.evaluateStage(engine, 1));
+        assertEquals(13, evaluator.evaluateStage(engine, 2));
     }
 
 
@@ -40,7 +40,7 @@ public class StageEvaluatorTest {
         engine.nextMove(6,1);
         engine.nextMove(0,2);
         engine.printStage();
-        assertEquals(12, evaluator.evaluateStage(engine.getStage(), 1));
-        assertEquals(17, evaluator.evaluateStage(engine.getStage(), 2));
+        assertEquals(12, evaluator.evaluateStage(engine, 1));
+        assertEquals(17, evaluator.evaluateStage(engine, 2));
     }
 }

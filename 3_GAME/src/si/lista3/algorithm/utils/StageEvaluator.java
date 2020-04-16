@@ -1,5 +1,6 @@
 package si.lista3.algorithm.utils;
 
+import si.lista3.engine.Connect4Engine;
 import si.lista3.engine.model.Field;
 
 import static si.lista3.engine.Connect4Engine.COLS;
@@ -7,12 +8,16 @@ import static si.lista3.engine.Connect4Engine.ROWS;
 
 public class StageEvaluator {
 
-    public int evaluateStage(Field[][] stage, int player) {
-        return evaluateStageForPlayer(stage, player) - evaluateStageForPlayer(stage, player == 1 ? 2 : 1);
+    public int evaluateStage(Connect4Engine engine, int player) {
+        if (engine.isFinished()) {
+            return 100;
+        }
+        return evaluateStageForPlayer(engine, player) - evaluateStageForPlayer(engine, player == 1 ? 2 : 1);
     }
 
 
-    public int evaluateStageForPlayer(Field[][] stage, int player) {
+    public int evaluateStageForPlayer(Connect4Engine engine, int player) {
+        Field[][] stage = engine.getStage();
         String desiredStringThree[] = new String[4];
         String desiredStringTwo[] = new String[6];
         if (player == 1) {
