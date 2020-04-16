@@ -60,6 +60,10 @@ public class Connect4Engine {
         if (!checkIfGameIsFinished(col, row, player)) {
             nextMovePlayer = nextMovePlayer != 1 ? 1 : 2;
         }
+        if (!simulation) {
+            System.out.println(col + "enigne" + columnPointers[col]);
+        }
+
     }
 
     private void finishGame(int winner) {
@@ -274,6 +278,10 @@ public class Connect4Engine {
 
     public Field[][] getStage() {
         return stage;
+    }
+
+    public int[] getColumnPointers() {
+        return columnPointers;
     }
 
     public List<Integer> getNotFullColumns() {
