@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
@@ -30,6 +32,9 @@ public class GameStageController {
     private FieldCircle[][] fields;
 
     @FXML
+    BorderPane mainBorderPane;
+
+    @FXML
     GridPane fieldsGridPane;
 
     @FXML
@@ -45,11 +50,15 @@ public class GameStageController {
     @FXML
     Button exitButton;
 
+    @FXML
+    Label messageLabel;
+
     private Connect4Engine engine;
 
     public void initialize() {
         minMaxAlgorithm = new MinMaxAlgorithm();
         registerEventListeners();
+        nextMoveButton.setDisable(true);
     }
 
     private void registerEventListeners() {
@@ -79,6 +88,11 @@ public class GameStageController {
                     }
                 }
         );
+        mainBorderPane.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.N && !nextMoveButton.isDisable()) {
+                nextMoveButton.fire();
+            }
+        });
     }
 
     private void initializeGameStage() {
@@ -97,12 +111,14 @@ public class GameStageController {
                 if (gameMode == 1) {
                     int currX = x;
                     fields[y][x].setOnMouseClicked(event -> {
-                        if (engine.nextMove(currX, 1)) {
-                            finishGame();
+                        if (columnPointers[currX] >= 0) {
+                            if (engine.nextMove(currX, 1)) {
+                                finishGame();
+                            }
+                            onColumnClicked(currX);
+                            setAllFieldsDisable(true);
+                            nextMoveButton.setDisable(false);
                         }
-                        onColumnClicked(currX);
-                        setAllFieldsDisable(true);
-                        nextMoveButton.setDisable(false);
                     });
                 }
             }
@@ -124,6 +140,7 @@ public class GameStageController {
         engine.nextMove(5,2);
         onColumnClicked(5);
         engine.printStage();
+        nextMoveButton.setDisable(false);
     }
 
     private void startHumanWithBotGame() {
@@ -137,6 +154,7 @@ public class GameStageController {
     }
 
     private void finishGame() {
+        nextMoveButton.setDisable(true);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Koniec gry!");
         alert.setContentText("Gra zakończona");
@@ -162,6 +180,7 @@ public class GameStageController {
                 gameModeValue.setText("Komputer vs Komputer");
                 break;
             case 1:
+                nextMoveButton.setDisable(true);
                 gameModeValue.setText("Człowiek vs Komputer");
                 break;
         }

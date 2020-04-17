@@ -58,9 +58,9 @@ public class Connect4Engine {
         }
         columnPointers[col]--;
         nextMovePlayer = nextMovePlayer != 1 ? 1 : 2;
-        if (!simulation) {
-            System.out.println(col + "enigne" + columnPointers[col]);
-        }
+//        if (!simulation) {
+//            System.out.println(col + "enigne" + columnPointers[col]);
+//        }
         return checkIfGameIsFinished(col, row, player);
     }
 
