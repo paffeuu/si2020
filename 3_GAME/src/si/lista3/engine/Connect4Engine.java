@@ -35,7 +35,7 @@ public class Connect4Engine {
         }
     }
 
-    public void nextMove(int col, int player) {
+    public boolean nextMove(int col, int player) {
         if (finished) {
             throw new GameFinishedException();
         }
@@ -57,18 +57,16 @@ public class Connect4Engine {
             stage[row][col].setState(Field.State.PLAYER_O);
         }
         columnPointers[col]--;
-        if (!checkIfGameIsFinished(col, row, player)) {
-            nextMovePlayer = nextMovePlayer != 1 ? 1 : 2;
-        }
+        nextMovePlayer = nextMovePlayer != 1 ? 1 : 2;
         if (!simulation) {
             System.out.println(col + "enigne" + columnPointers[col]);
         }
-
+        return checkIfGameIsFinished(col, row, player);
     }
 
     private void finishGame(int winner) {
         finished = true;
-        nextMovePlayer = 0;
+//        nextMovePlayer = 0;
         result = winner;
         if (!simulation) {
             printResult();
@@ -282,6 +280,10 @@ public class Connect4Engine {
 
     public int[] getColumnPointers() {
         return columnPointers;
+    }
+
+    public int getNextMovePlayer() {
+        return nextMovePlayer;
     }
 
     public List<Integer> getNotFullColumns() {
