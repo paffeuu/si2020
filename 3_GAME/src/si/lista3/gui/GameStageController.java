@@ -2,14 +2,14 @@ package si.lista3.gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import si.lista3.algorithm.GameAlgorithm;
 import si.lista3.algorithm.MinMaxAlgorithm;
 import si.lista3.engine.Connect4Engine;
 import si.lista3.gui.control.FieldCircle;
@@ -23,7 +23,7 @@ public class GameStageController {
     private final static int COLS = Connect4Engine.COLS;
 
 
-    private MinMaxAlgorithm minMaxAlgorithm;
+    private GameAlgorithm gameAlgorithm;
     // game modes; 0 - AI vs AI, 1 - Human vs AI
     private int gameMode = 0;
 
@@ -51,13 +51,23 @@ public class GameStageController {
     Button exitButton;
 
     @FXML
-    Label messageLabel;
+    VBox algorithmVBox;
+
+    @FXML
+    RadioButton minMaxRadioButton;
+    @FXML
+    RadioButton alfaBetaRadioButton;
+
+    @FXML
+    VBox minMaxDepthVBox;
+    @FXML
+    Slider minMaxDepthSlider;
 
     private Connect4Engine engine;
 
     public void initialize() {
-        minMaxAlgorithm = new MinMaxAlgorithm();
         registerEventListeners();
+        initializeChooseAlgorithmRadioButtonGroup();
         nextMoveButton.setDisable(true);
     }
 
@@ -76,9 +86,11 @@ public class GameStageController {
         changeGameModeButton.setOnAction(event -> changeGameMode());
         nextMoveButton.setOnAction(
                 event -> {
-                    int nextMove = this.minMaxAlgorithm.getBestMove(engine, 5, engine.getNextMovePlayer());
+                    int nextMove = this.gameAlgorithm.getBestMove(engine, engine.getNextMovePlayer());
+                    System.out.println("Depth: " + ((MinMaxAlgorithm) gameAlgorithm).getDepth());
                     if (engine.nextMove(nextMove, engine.getNextMovePlayer())) {
                         finishGame();
+                        //TODO: does not work
                     }
                     onColumnClicked(nextMove);
                     engine.printStage();
@@ -93,6 +105,16 @@ public class GameStageController {
                 nextMoveButton.fire();
             }
         });
+        minMaxRadioButton.setOnAction(event -> {
+            gameAlgorithm = new MinMaxAlgorithm();
+            minMaxDepthVBox.setVisible(true);
+        });
+//        alfaBetaRadioButton.setOnAction(event -> {
+//            gameAlgorithm = new AlfaBetaAlgorithm();
+//            minMaxDepthVBox.setVisible(false);
+//        });
+        minMaxDepthSlider.valueProperty().addListener((observable, oldValue, newValue)
+                -> ((MinMaxAlgorithm) gameAlgorithm).setDepth(newValue.intValue()));
     }
 
     private void initializeGameStage() {
@@ -125,20 +147,28 @@ public class GameStageController {
         }
     }
 
+    private void initializeChooseAlgorithmRadioButtonGroup() {
+        ToggleGroup group = new ToggleGroup();
+        minMaxRadioButton.setToggleGroup(group);
+        alfaBetaRadioButton.setToggleGroup(group);
+        minMaxRadioButton.fire();
+        alfaBetaRadioButton.setDisable(true);
+    }
+
     private void startExampleBotGame() {
         initializeGameStage();
 
         engine = new Connect4Engine();
         columnPointers = engine.getColumnPointers();
 
-        engine.nextMove(4,1);
-        onColumnClicked(4);
-        engine.nextMove(3,2);
-        onColumnClicked(3);
-        engine.nextMove(5,1);
-        onColumnClicked(5);
-        engine.nextMove(5,2);
-        onColumnClicked(5);
+//        engine.nextMove(4,1);
+//        onColumnClicked(4);
+//        engine.nextMove(3,2);
+//        onColumnClicked(3);
+//        engine.nextMove(5,1);
+//        onColumnClicked(5);
+//        engine.nextMove(5,2);
+//        onColumnClicked(5);
         engine.printStage();
         nextMoveButton.setDisable(false);
     }

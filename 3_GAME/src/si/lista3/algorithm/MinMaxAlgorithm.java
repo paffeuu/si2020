@@ -5,15 +5,16 @@ import si.lista3.engine.Connect4Engine;
 
 import java.util.List;
 
-public class MinMaxAlgorithm {
+public class MinMaxAlgorithm implements GameAlgorithm {
     private StageEvaluator evaluator;
-
+    private int depth;
 
     public MinMaxAlgorithm() {
         evaluator = new StageEvaluator();
+        depth = 5;
     }
 
-    public int getBestMove(Connect4Engine engine, int depth, int player) {
+    public int getBestMove(Connect4Engine engine, int player) {
 
         List<Integer> cols = engine.getNotFullColumns();
         int maxEval = Integer.MIN_VALUE;
@@ -27,8 +28,6 @@ public class MinMaxAlgorithm {
                 maxCol = col;
             }
         }
-
-
         return maxCol;
     }
 
@@ -66,5 +65,13 @@ public class MinMaxAlgorithm {
             }
             return minEval;
         }
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 }

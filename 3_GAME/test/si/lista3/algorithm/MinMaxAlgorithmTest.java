@@ -23,9 +23,10 @@ public class MinMaxAlgorithmTest {
         engine.printStage();
 
         minMaxAlgorithm = new MinMaxAlgorithm();
+//        minMaxAlgorithm.setDepth(5);
         for (int i = 0; i < 100; i++) {
             int player = 1 + i % 2;
-            int nextMove = minMaxAlgorithm.getBestMove(engine, 5, player);
+            int nextMove = minMaxAlgorithm.getBestMove(engine, player);
             engine.nextMove(nextMove, player);
             engine.printStage();
             if (engine.isFinished()) {
