@@ -28,7 +28,7 @@ public class DataProcessor {
                     .forEach(categorySet::add);
             prepareHeaders();
             for (File file : files) {
-                if (!file.getName().contains(".txt")) {
+                if (!file.getName().contains(".txt") || file.getName().equals("license.txt")) {
                     continue;
                 }
                 String fileContent = null;
@@ -40,6 +40,7 @@ public class DataProcessor {
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         line = line.trim();
+                        line = line.replace("\"", "");
                         sb.append(line);
                         sb.append(' ');
                     }
