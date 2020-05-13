@@ -6,17 +6,42 @@ import java.io.IOException;
 import java.util.*;
 
 public class DataProcessor {
-    private String inFilePathStr;
-    private String outFilePathStr;
+    private String trainInFilePathStr;
+    private String testInFilePathStr;
+    private String trainOutFilePathStr;
+    private String testOutFilePathStr;
     private long id = System.currentTimeMillis();
     private Set<String> categorySet;
+    private int counter;
+    private int threshold;
+    private final double trainSize = 0.8;
 
-    public DataProcessor(String inFilePathStr) throws IOException {
-        this.inFilePathStr = inFilePathStr;
-        this.outFilePathStr = "data//weka//out" + id + ".arff";
+    public DataProcessor(String trainInFilePathStr, String testInFilePathStr) throws IOException {
+        this.trainInFilePathStr = trainInFilePathStr;
+        this.testInFilePathStr = testInFilePathStr;
+        this.trainOutFilePathStr = "data//weka//out_train" + id + ".arff";
+        this.testOutFilePathStr = "data//weka//out_test" + id + ".arff";
     }
 
     public void processData() {
+        int filesNumber = 0;
+        File fileTrainPath = new File(trainInFilePathStr);
+        if (fileTrainPath.exists() && fileTrainPath.isDirectory()) {
+            File[] files = fileTrainPath.listFiles();
+            filesNumber += files.length;
+        }
+        File fileTestPath = new File(testInFilePathStr);
+        if (fileTestPath.exists() && fileTestPath.isDirectory()) {
+            File[] files = fileTestPath.listFiles();
+            filesNumber += files.length;
+        }
+        threshold = (int)(trainSize * (double)filesNumber);
+
+        processData(trainInFilePathStr);
+        processData(testInFilePathStr);
+    }
+
+    private void processData(String inFilePathStr) {
         File filePath = new File(inFilePathStr);
         categorySet = new HashSet<>();
         if (filePath.exists() && filePath.isDirectory()) {
@@ -52,18 +77,28 @@ public class DataProcessor {
                     e.printStackTrace();
                 }
                 if (fileContent != null) {
-                    try (FileWriter fw = new FileWriter(new File(outFilePathStr), true)) {
-                        fw.append(fileContent);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (counter < threshold) {
+                        try (FileWriter fw = new FileWriter(new File(trainOutFilePathStr), true)) {
+                            fw.append(fileContent);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        try (FileWriter fw = new FileWriter(new File(testOutFilePathStr), true)) {
+                            fw.append(fileContent);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
+
                 }
+                counter++;
             }
         }
     }
 
     private void prepareHeaders() {
-        try (FileWriter fw = new FileWriter(new File(outFilePathStr), true)) {
+        try (FileWriter fw = new FileWriter(new File(trainOutFilePathStr), true)) {
             StringBuilder sb = new StringBuilder();
             String classes = String.join(", ", new ArrayList<>(categorySet));
             sb.append("@relation set")
