@@ -18,13 +18,14 @@ public class DataProcessor {
     private List<Record> outTestList;
 
     private long timestamp = System.currentTimeMillis();
-    private final double trainRatio = 0.7;
+    private final double trainRatio;
 
-    public DataProcessor(String trainInFilePathStr, String testInFilePathStr) throws IOException {
+    public DataProcessor(String trainInFilePathStr, String testInFilePathStr, double trainRatio) throws IOException {
         this.trainInFilePathStr = trainInFilePathStr;
         this.testInFilePathStr = testInFilePathStr;
         this.trainOutFilePathStr = "data//weka//out_train" + timestamp + ".arff";
         this.testOutFilePathStr = "data//weka//out_test" + timestamp + ".arff";
+        this.trainRatio = trainRatio;
 
         recordMap = new HashMap<>();
         outTrainList = new ArrayList<>();
