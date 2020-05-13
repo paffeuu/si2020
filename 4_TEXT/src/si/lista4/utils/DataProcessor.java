@@ -1,5 +1,7 @@
 package si.lista4.utils;
 
+import si.lista4.model.Record;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,58 +12,70 @@ public class DataProcessor {
     private String testInFilePathStr;
     private String trainOutFilePathStr;
     private String testOutFilePathStr;
-    private long id = System.currentTimeMillis();
-    private Set<String> categorySet;
-    private int counter;
-    private int threshold;
-    private final double trainSize = 0.8;
+
+    private Map<String, List<Record>> recordMap;
+    private List<Record> outTrainList;
+    private List<Record> outTestList;
+
+    private long timestamp = System.currentTimeMillis();
+    private final double trainRatio = 0.7;
 
     public DataProcessor(String trainInFilePathStr, String testInFilePathStr) throws IOException {
         this.trainInFilePathStr = trainInFilePathStr;
         this.testInFilePathStr = testInFilePathStr;
-        this.trainOutFilePathStr = "data//weka//out_train" + id + ".arff";
-        this.testOutFilePathStr = "data//weka//out_test" + id + ".arff";
+        this.trainOutFilePathStr = "data//weka//out_train" + timestamp + ".arff";
+        this.testOutFilePathStr = "data//weka//out_test" + timestamp + ".arff";
+
+        recordMap = new HashMap<>();
+        outTrainList = new ArrayList<>();
+        outTestList = new ArrayList<>();
     }
 
     public void processData() {
-        int filesNumber = 0;
-        File fileTrainPath = new File(trainInFilePathStr);
-        if (fileTrainPath.exists() && fileTrainPath.isDirectory()) {
-            File[] files = fileTrainPath.listFiles();
-            filesNumber += files.length;
-        }
-        File fileTestPath = new File(testInFilePathStr);
-        if (fileTestPath.exists() && fileTestPath.isDirectory()) {
-            File[] files = fileTestPath.listFiles();
-            filesNumber += files.length;
-        }
-        threshold = (int)(trainSize * (double)filesNumber);
+        File trainInFilePath = new File(trainInFilePathStr);
+        File testInFilePath = new File(testInFilePathStr);
 
-        processData(trainInFilePathStr);
-        processData(testInFilePathStr);
+        loadCategoriesFromFileNames(trainInFilePath);
+        loadCategoriesFromFileNames(testInFilePath);
+
+        loadRecords(trainInFilePath);
+        loadRecords(testInFilePath);
+
+        divideRecordsBetweenSets();
+
+        File trainOutFilePath = new File(trainOutFilePathStr);
+        File testOutFilePath = new File(testOutFilePathStr);
+
+        prepareHeaders(trainOutFilePath);
+        prepareDataContent(trainOutFilePath, outTrainList);
+
+        prepareHeaders(testOutFilePath);
+        prepareDataContent(testOutFilePath, outTestList);
     }
 
-    private void processData(String inFilePathStr) {
-        File filePath = new File(inFilePathStr);
-        categorySet = new HashSet<>();
-        if (filePath.exists() && filePath.isDirectory()) {
-            File[] files = filePath.listFiles();
+    private void loadCategoriesFromFileNames(File inFilePath) {
+        if (inFilePath.exists() && inFilePath.isDirectory()) {
+            File[] files = inFilePath.listFiles();
             Arrays.stream(files)
                     .map(File::getName)
                     .filter(fileName -> fileName.contains(".txt") && !fileName.equals("license.txt"))
                     .map(fileName -> fileName.split("_")[0])
-                    .forEach(categorySet::add);
-            prepareHeaders();
+                    .forEach(category -> recordMap.put(category, new ArrayList<>()));
+        }
+    }
+
+    private void loadRecords(File inFilePath) {
+        File[] files = inFilePath.listFiles();
+        if (files != null) {
             for (File file : files) {
                 if (!file.getName().contains(".txt") || file.getName().equals("license.txt")) {
                     continue;
                 }
+                System.out.println("Processing " + file.getName());
                 String fileContent = null;
                 String fileCategory = file.getName().split("_")[0];
-                System.out.println("Processing " + file.getName());
                 try (Scanner scanner = new Scanner(file)) {
                     StringBuilder sb = new StringBuilder();
-                    sb.append("\"");
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         line = line.trim();
@@ -69,40 +83,41 @@ public class DataProcessor {
                         sb.append(line);
                         sb.append(' ');
                     }
-                    sb.append("\", ");
-                    sb.append(fileCategory);
-                    sb.append("\n");
                     fileContent = sb.toString();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 if (fileContent != null) {
-                    if (counter < threshold) {
-                        try (FileWriter fw = new FileWriter(new File(trainOutFilePathStr), true)) {
-                            fw.append(fileContent);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        try (FileWriter fw = new FileWriter(new File(testOutFilePathStr), true)) {
-                            fw.append(fileContent);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
+                    Record record = new Record(fileCategory, fileContent);
+                    recordMap.get(fileCategory).add(record);
                 }
-                counter++;
+            }
+        } else {
+            System.err.println("There was a problem with file: " + inFilePath.getName());
+        }
+    }
+
+    public void divideRecordsBetweenSets() {
+        for (List<Record> recordList : recordMap.values()) {
+            int trainSetRecords = (int) (trainRatio * recordList.size());
+            int testSetRecords = recordList.size() - trainSetRecords;
+
+            for (int i = 0; i < trainSetRecords; i++) {
+                outTrainList.add(recordList.remove(0));
+            }
+            for (int i = 0; i < testSetRecords; i++) {
+                outTestList.add(recordList.remove(0));
             }
         }
     }
 
-    private void prepareHeaders() {
-        try (FileWriter fw = new FileWriter(new File(trainOutFilePathStr), true)) {
+
+    private void prepareHeaders(File outFilePath) {
+        try (FileWriter fw = new FileWriter(outFilePath, true)) {
             StringBuilder sb = new StringBuilder();
-            String classes = String.join(", ", new ArrayList<>(categorySet));
+            String classes = String.join(", ", new ArrayList<>(recordMap.keySet()));
             sb.append("@relation set")
-                    .append(id)
+                    .append(timestamp)
                     .append("\n\n")
                     .append("@attribute text string\n")
                     .append("@attribute class {")
@@ -110,6 +125,25 @@ public class DataProcessor {
                     .append("}\n\n")
                     .append("@data\n\n");
             fw.append(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void prepareDataContent(File outFilePath, List<Record> outList) {
+        try (FileWriter fw = new FileWriter(outFilePath, true)) {
+            for (Record record : outList) {
+                StringBuilder sb = new StringBuilder();
+                sb.append('"')
+                        .append(record.getArticleContent())
+                        .append('"')
+                        .append(',')
+                        .append(' ')
+                        .append(record.getClassName())
+                        .append('\n');
+                String line = sb.toString();
+                fw.append(line);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
